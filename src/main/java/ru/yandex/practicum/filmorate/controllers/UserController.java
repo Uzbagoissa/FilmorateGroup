@@ -5,7 +5,7 @@ import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.exceptions.ValidationException;
 import ru.yandex.practicum.filmorate.models.User;
 
-import java.time.LocalDate;
+import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -26,13 +26,9 @@ public class UserController {
     }
 
     @PostMapping
-    public User addUser(@RequestBody User user){
-        conditionPOSTAndPutUser(user);
+    public User addUser(@Valid @RequestBody User user){
+        conditionPOSTAndPutUserWithoutValid(user);
 
-        if(users.containsKey(user.getId())){
-            throw new ValidationException("Пользователь - " + user.getName() + " c id - " + user.getId() +
-                    " уже есть в базе");
-        }
         user.setId(id++);
         log.info("В базу добавлен пользователь * {} * зарегестрированный на почтовый ящик: {}"
                 , user.getLogin(),user.getEmail());
@@ -41,8 +37,8 @@ public class UserController {
     }
 
     @PutMapping
-    public User updateUser(@RequestBody User user){
-        conditionPOSTAndPutUser(user);
+    public User updateUser(@Valid @RequestBody User user){
+        conditionPOSTAndPutUserWithoutValid(user);
 
         if (!users.containsKey(user.getId())){
             throw new ValidationException("Пользователь - " + user.getName() + " c id - " + user.getId() +
@@ -53,22 +49,11 @@ public class UserController {
         return user;
     }
 
-    private void conditionPOSTAndPutUser(User user){
-        if (user.getEmail() == null || user.getEmail().isBlank()){
-            throw new ValidationException("Не введен почтовый адрес");
-        }
-        if (user.getLogin() == null || user.getEmail().isBlank()){
-            throw new ValidationException("Не введен логин");
-        }
-        if (user.getLogin().contains(" ")){
-            throw new ValidationException("Логин содержит пробелы");
-        }
+    private void conditionPOSTAndPutUserWithoutValid(User user){
         if (user.getName() == null || user.getName().isBlank()){
             user.setName(user.getLogin());
         }
-        if (user.getBirthday().isAfter(LocalDate.now())){
-            throw new ValidationException("Пользователь из будущего");
-        }
+
     }
 
 }

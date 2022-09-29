@@ -5,6 +5,7 @@ import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.exceptions.ValidationException;
 import ru.yandex.practicum.filmorate.models.Film;
 
+import javax.validation.Valid;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -28,8 +29,8 @@ public class FilmController {
     }
 
     @PostMapping
-    public Film addFilm(@RequestBody Film film){
-        conditionPOSTAndPutFilm(film);
+    public Film addFilm(@Valid @RequestBody Film film){
+        conditionPOSTAndPutFilmWithoutValid(film);
 
         if(films.containsKey(film.getId())){
             throw new ValidationException("Фильм - " + film.getName() + " c id - " + film.getId() + " уже есть в базе");
@@ -42,8 +43,8 @@ public class FilmController {
     }
 
     @PutMapping
-    public Film updateFilm(@RequestBody Film film){
-        conditionPOSTAndPutFilm(film);
+    public Film updateFilm(@Valid @RequestBody Film film){
+        conditionPOSTAndPutFilmWithoutValid(film);
 
         if(!films.containsKey(film.getId())){
             throw new ValidationException("Фильм - " + film.getName() + " c id - " + film.getId() +
@@ -55,19 +56,10 @@ public class FilmController {
         return film;
     }
 
-    private void conditionPOSTAndPutFilm(Film film){
-        if (film.getName() == null || film.getName().isBlank()){
-            throw new ValidationException("Название фильма не может быть пустым");
-        }
-        if (film.getDescription().length() > 200){
-            throw new ValidationException("Описание фильма не может быть больше 200 символов");
-        }
+    private void conditionPOSTAndPutFilmWithoutValid(Film film){
         if (film.getReleaseDate().isBefore(DATE_FIRST_FILM)){
             throw new ValidationException("Фильм не может быть выпущен ранее: " +
                     DATE_FIRST_FILM);
-        }
-        if (film.getDuration() <= 0 ){
-            throw new ValidationException("Фильм не может идти меньше 0 минут");
         }
     }
 
