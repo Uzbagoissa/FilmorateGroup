@@ -26,7 +26,7 @@ public class InMemoryFilmStorage implements FilmStorage {
         conditionPOSTAndPutFilmWithoutValid(film);
 
         if (films.containsKey(film.getId())) {
-            throw new ValidationException("Фильм - " + film.getName() + " c id - " + film.getId() + " уже есть в базе");
+            throw new ValidationFilmByIdException("Фильм - " + film.getName() + " c id - " + film.getId() + " уже есть в базе");
         }
 
         film.setId(getNextId());
