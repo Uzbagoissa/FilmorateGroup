@@ -5,16 +5,13 @@ import org.junit.jupiter.api.Test;
 import ru.yandex.practicum.filmorate.controllers.FilmController;
 import ru.yandex.practicum.filmorate.exceptions.ValidationConditionException;
 import ru.yandex.practicum.filmorate.exceptions.ValidationException;
+import ru.yandex.practicum.filmorate.exceptions.ValidationFilmByIdException;
 import ru.yandex.practicum.filmorate.models.Film;
 import ru.yandex.practicum.filmorate.models.User;
 import ru.yandex.practicum.filmorate.services.FilmService;
 import ru.yandex.practicum.filmorate.services.UserService;
-import ru.yandex.practicum.filmorate.storage.UserStorage;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
 
 import static java.time.Month.JANUARY;
@@ -70,7 +67,7 @@ class FilmControllerTest {
         filmController.addFilm(firstFilm);
 
         Throwable exception = assertThrows(
-                ValidationException.class,
+                ValidationFilmByIdException.class,
                 () -> {
                     filmController.addFilm(secondFilm);
                 }
