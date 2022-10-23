@@ -2,8 +2,9 @@
 Template repository for Filmorate project.
 ![diagram](https://github.com/EvgenyBelykh/java-filmorate/blob/main/filmorate%20(1)%20(1).png)
 
-### Code from dbdiagram.io ###
-Project filmorate {
+### Code from dbdiagram.io: ###
+
+< Project filmorate {
   database_type: 'PostgreSQL'
 }
 
@@ -90,3 +91,4 @@ Ref: F.id_film < likes.id_film
 Ref: users_friends.id_status < status.id_status
 Ref: U.id_user < users_friends.id_user_one
 Ref: U.id_user < users_friends.id_user_two
+>
