@@ -2,7 +2,7 @@
 Template repository for Filmorate project.
 ![diagram](https://github.com/EvgenyBelykh/java-filmorate/blob/main/filmorate%20(1)%20(1).png)
 
-##### Code from dbdiagram.io: #####
+## Code from dbdiagram.io:
 
   ``` 
   Project filmorate {
