@@ -4,7 +4,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exceptions.ValidationException;
-import ru.yandex.practicum.filmorate.exceptions.ValidationUserByIdException;
 import ru.yandex.practicum.filmorate.models.User;
 import ru.yandex.practicum.filmorate.storage.InMemoryUserStorage;
 import ru.yandex.practicum.filmorate.storage.UserStorage;
@@ -51,11 +50,9 @@ public class UserService {
 
         User user = userStorage.getUsers().get(userId);
         user.getFriends().add(friendId);
-//        userStorage.getUsers().put(userId, user);
 
         User friend = userStorage.getUsers().get(friendId);
         friend.getFriends().add(userId);
-//        userStorage.getUsers().put(friendId,friend);
 
         log.info("У пользователя с id: {} появился с друг с id: {}", user.getId(), friend.getId());
         return user;
@@ -66,11 +63,9 @@ public class UserService {
 
         User user = userStorage.getUsers().get(userId);
         user.getFriends().remove(friendId);
-//        userStorage.getUsers().put(userId, user);
 
         User friend = userStorage.getUsers().get(friendId);
         friend.getFriends().remove(userId);
-//        userStorage.getUsers().put(friendId,friend);
 
         log.info("Пользователи с id: {} и {} больше не друзья", user.getId(), friend.getId());
         return user;
