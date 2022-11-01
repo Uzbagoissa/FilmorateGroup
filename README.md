@@ -1,6 +1,6 @@
 # java-filmorate
 Template repository for Filmorate project.
-![diagram](https://github.com/EvgenyBelykh/java-filmorate/blob/main/filmorate%20(2).png)
+![diagram](https://github.com/EvgenyBelykh/java-filmorate/blob/main/filmorate%20(4).png)
 
 ## Code from dbdiagram.io:
 
@@ -8,7 +8,7 @@ Template repository for Filmorate project.
 
   ``` 
   Project filmorate {
-  database_type: 'PostgreSQL'
+  database_type: 'H2'
 }
 
 Table users as U{
@@ -17,17 +17,15 @@ Table users as U{
   email email [unique]
   login varchar [not null]
   birthday date
-  last_update datetime
 }
 
 Table films as F {
   id_film int [pk, increment]
   name varchar
   description varchar
-  releaseDate date
+  release_date date
   duration int
   id_rating int
-  last_update datetime
 }
 
 enum genre{
@@ -41,60 +39,34 @@ enum genre{
   
 Table film_genres {
   id_film int [pk]
-  id_genre genre [pk]
-  last_update datetime
+  id_genre int [pk]
 }
 
 Table genres {
   id_genre int [pk]
   genre genre
-  last_update datetime
 }
 
 enum rating{
     G
     PG
-    PG13
+    PG_13
     R
-    NC17
-}
-
-Table rating {
-  id_rating int [pk]
-  rating rating
-  last_update datetime
+    NC_17
 }
 
 Table likes {
   id_user int [pk]
   id_film int [pk]
-  last_update datetime
 }
 
 Table users_friends{
   id_user_one int [pk]
   id_user_two int [pk]
-  id_status int
-  last_update datetime
 }
 
-enum status{
-  request
-  confirmation
-  rejected
-  block
-}
-
-Table status{
-  id_status int [pk]
-  status status
-  last_update datetime
-}
-
-Ref: F.id_rating < rating.id_rating
 Ref: U.id_user < likes.id_user
 Ref: F.id_film < likes.id_film
-Ref: users_friends.id_status < status.id_status
 Ref: U.id_user < users_friends.id_user_one
 Ref: U.id_user < users_friends.id_user_two
 Ref: genres.id_genre > film_genres.id_genre
