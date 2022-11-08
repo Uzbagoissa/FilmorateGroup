@@ -1,6 +1,6 @@
 # java-filmorate
 Template repository for Filmorate project.
-![diagram](https://github.com/EvgenyBelykh/java-filmorate/blob/main/filmorate%20(4).png)
+![diagram](https://github.com/EvgenyBelykh/java-filmorate/blob/main/filmorate%20(5).png)
 
 ## Code from dbdiagram.io:
 
@@ -25,7 +25,8 @@ Table films as F {
   description varchar
   release_date date
   duration int
-  id_rating int
+  rate int
+  id_mpa int
 }
 
 enum genre{
@@ -47,7 +48,12 @@ Table genres {
   genre genre
 }
 
-enum rating{
+Table mpa {
+  id_mpa int [pk]
+  mpa mpa
+}
+
+enum mpa{
     G
     PG
     PG_13
@@ -69,6 +75,7 @@ Ref: U.id_user < likes.id_user
 Ref: F.id_film < likes.id_film
 Ref: U.id_user < users_friends.id_user_one
 Ref: U.id_user < users_friends.id_user_two
-Ref: genres.id_genre > film_genres.id_genre
+Ref: genres.id_genre < film_genres.id_genre
 Ref: F.id_film < film_genres.id_film
+Ref: mpa.id_mpa > F.id_mpa
    ```
