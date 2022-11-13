@@ -1,15 +1,20 @@
 package ru.yandex.practicum.filmorate.models;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.validation.constraints.*;
 import java.time.LocalDate;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 @Builder
 public class Film {
 
@@ -28,6 +33,10 @@ public class Film {
     @Min(0)
     private int duration;
 
-    private final Set<Integer> likes = new HashSet<>();
+    private Set<Integer> likes = new HashSet<>();
+
+    private int rate;
+    private Mpa mpa;
+    private List<Genre> genres;
 
 }
