@@ -1,6 +1,7 @@
 package ru.yandex.practicum.filmorate.storage.daoImpl;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
@@ -19,11 +20,11 @@ import java.util.Objects;
 
 @Component
 @Slf4j
-public class InDbFilmStorage implements FilmStorage {
+public class DaoFilmStorage implements FilmStorage {
 
     private final JdbcTemplate jdbcTemplate;
 
-    public InDbFilmStorage(JdbcTemplate jdbcTemplate) {
+    public DaoFilmStorage(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
     }
 
@@ -71,12 +72,6 @@ public class InDbFilmStorage implements FilmStorage {
         addOrUpdateGenre(film);
 
         return getOrValidFilmById(id);
-    }
-
-    private void checkMpaIsNull(PreparedStatement ps, Film film) throws SQLException {
-        if(film.getMpa() != null){
-            ps.setInt(6, film.getMpa().getId());
-        }
     }
 
     @Override
@@ -191,6 +186,15 @@ public class InDbFilmStorage implements FilmStorage {
             throw new EmptyResultFromDataBaseException("Mpa c id: " + id + " не найден");
         }
     }
+    private void checkMpaIsNull(PreparedStatement ps, Film film) throws SQLException {
+        if(film.getMpa() != null){
+            ps.setInt(6, film.getMpa().getId());
+        } else if (film.getMpa() == null)  {
+            throw new DataIntegrityViolationException("MPA не может быть null");
+        } else if (film.getMpa().getId() < 1 || film.getMpa().getId() > 5) {
+            throw new ValidationException("Данного рейтинга еще не существует");
+        }
+    }
 
     private Mpa mapRowToMpa(ResultSet resultSet, int i) throws SQLException {
         return Mpa.builder()
@@ -233,7 +237,6 @@ public class InDbFilmStorage implements FilmStorage {
                         "VALUES (?, ?)";
 
                 jdbcTemplate.update(sqlGenre, id, genre.getId());
-                log.info("Для фильма c id: {} добавлен жанр: {}", film.getId(), genre.getName());
             }
         } else {
             String sqlGenre = "DELETE " +

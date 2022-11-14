@@ -15,10 +15,10 @@ import java.util.*;
 
 @Component
 @Slf4j
-public class InDbUserStorage implements UserStorage {
+public class DaoUserStorage implements UserStorage {
     private final JdbcTemplate jdbcTemplate;
 
-    public InDbUserStorage(JdbcTemplate jdbcTemplate) {
+    public DaoUserStorage(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
     }
 
@@ -28,7 +28,6 @@ public class InDbUserStorage implements UserStorage {
             String sqlQuery = "SELECT id, name, email, login, birthday " +
                     "FROM users " +
                     "WHERE id = ?";
-            log.info("Возвращен пользователь с id: {}", userId);
             return jdbcTemplate.queryForObject(sqlQuery, this::mapRowToUsers, userId);
         } catch (Exception e) {
             throw new ValidationException("Пользователь c id - " + userId + " не содержится в базе");

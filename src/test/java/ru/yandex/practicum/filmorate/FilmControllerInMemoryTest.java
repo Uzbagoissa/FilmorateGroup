@@ -1,25 +1,6 @@
 package ru.yandex.practicum.filmorate;
 
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import ru.yandex.practicum.filmorate.controllers.FilmController;
-import ru.yandex.practicum.filmorate.exceptions.ValidationConditionException;
-import ru.yandex.practicum.filmorate.exceptions.ValidationException;
-import ru.yandex.practicum.filmorate.exceptions.ValidationFilmByIdException;
-import ru.yandex.practicum.filmorate.models.Film;
-import ru.yandex.practicum.filmorate.models.User;
-import ru.yandex.practicum.filmorate.services.FilmService;
-import ru.yandex.practicum.filmorate.services.UserService;
-
-import java.time.LocalDate;
-import java.util.Collections;
-
-import static java.time.Month.JANUARY;
-import static java.util.Calendar.*;
-import static org.junit.jupiter.api.Assertions.*;
-import static ru.yandex.practicum.filmorate.storage.inMemory.InMemoryFilmStorage.DATE_FIRST_FILM;
-
-class FilmControllerTest {
+class FilmControllerInMemoryTest {
 
 //    FilmController filmController;
 //    @BeforeEach

@@ -16,12 +16,13 @@ public class UserService {
     private final UserStorage userStorage;
 
     @Autowired
-    public UserService(@Qualifier("inDbUserStorage") UserStorage userStorage){
+    public UserService(@Qualifier("daoUserStorage") UserStorage userStorage){
         this.userStorage = userStorage;
     }
     public User getUserById(Integer userId){
-
-        return userStorage.getOrValidUserById(userId);
+        User user = userStorage.getOrValidUserById(userId);
+        log.info("Возвращен пользователь с id: {}", userId);
+        return user;
     }
     public User addUser(User user){
         User curUser = userStorage.addUser(user);

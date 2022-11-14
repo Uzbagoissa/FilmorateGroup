@@ -36,17 +36,19 @@ public class InMemoryUserStorage implements UserStorage {
     @Override
     public void removeUser(User user) {
         validUser(user);
-        Set<Integer> setFriends = user.getFriends();
 
-
-
-        //удалить из списка друзей удаляемого пользователя
-        for (Integer key : getMapUsers().keySet()) {
-            if(setFriends.contains(key)){
-                getUsers().get(key).getFriends().remove(user.getId());
+        if(user.getFriends() != null){
+            List<Integer> setFriends = new ArrayList<>(user.getFriends());
+            //удалить из списка друзей удаляемого пользователя
+            for (Integer key : getMapUsers().keySet()) {
+                if(setFriends.contains(key)){
+                    getMapUsers().get(key).getFriends().remove(user.getId());
+                }
             }
         }
-        removeUser(user);
+
+
+        users.remove(user.getId());
     }
 
     @Override
@@ -60,9 +62,8 @@ public class InMemoryUserStorage implements UserStorage {
     }
     @Override
     public List<User> getUsers() {
-        return (List<User>) users.values();
+        return new ArrayList<>(users.values()) ;
     }
-
     @Override
     public User getOrValidUserById(Integer userId) {
         validUser(users.get(userId));
@@ -73,10 +74,12 @@ public class InMemoryUserStorage implements UserStorage {
         validUser(getOrValidUserById(userId));
         validUser(getOrValidUserById(friendId));
 
-        User user = getUsers().get(userId);
+        User user = getMapUsers().get(userId);
+        user.setFriends(new HashSet<>());
         user.getFriends().add(friendId);
 
-        User friend = getUsers().get(friendId);
+        User friend = getMapUsers().get(friendId);
+        friend.setFriends(new HashSet<>());
         friend.getFriends().add(userId);
 
         log.info("У пользователя с id: {} появился друг с id: {}", user.getId(), friend.getId());
@@ -96,10 +99,10 @@ public class InMemoryUserStorage implements UserStorage {
         validUser(getOrValidUserById(userId));
         validUser(getOrValidUserById(otherId));
 
-        User user = getUsers().get(userId);
+        User user = getMapUsers().get(userId);
         Set<Integer> listUserFriends = user.getFriends();
 
-        User anotherUser = getUsers().get(otherId);
+        User anotherUser = getMapUsers().get(otherId);
         Set<Integer> listAnotherUserFriends = anotherUser.getFriends();
 
         Set<Integer> intersectionFriends = new HashSet<>(listUserFriends);
