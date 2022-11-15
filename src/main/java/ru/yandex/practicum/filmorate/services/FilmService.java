@@ -7,8 +7,6 @@ import ru.yandex.practicum.filmorate.models.Film;
 
 import lombok.extern.slf4j.Slf4j;
 import ru.yandex.practicum.filmorate.models.User;
-import ru.yandex.practicum.filmorate.models.Genre;
-import ru.yandex.practicum.filmorate.models.Mpa;
 import ru.yandex.practicum.filmorate.storage.interf.FilmStorage;
 
 import java.util.*;
@@ -30,7 +28,7 @@ public class FilmService {
         return filmStorage.getFilms();
     }
     public Film getFilmById(Integer filmId) {
-        return filmStorage.getOrValidFilmById(filmId);
+        return filmStorage.getFilmById(filmId);
     }
 
     public Film addFilm(Film film){
@@ -43,38 +41,23 @@ public class FilmService {
     public void removeFilm(Film film){
         filmStorage.removeFilm(film);
     }
-
     public Film addLikeFromUserById(Integer filmId, Integer userId){
-        Film film = filmStorage.getOrValidFilmById(filmId);
+        Film film = filmStorage.getFilmById(filmId);
         User user = userService.getUserById(userId);
 
         return filmStorage.addLikeFromUserById(film.getId(), user.getId());
     }
-
     public Film removeLikeFromUserById(Integer filmId, Integer userId){
-        Film film = filmStorage.getOrValidFilmById(filmId);
+        Film film = filmStorage.getFilmById(filmId);
         User user = userService.getUserById(userId);
 
         return filmStorage.removeLikeFromUserById(film.getId(), user.getId());
     }
-
     public List<Film> getMostPopularFilmByCountLikes(Integer count){
         return filmStorage.getMostPopularFilmByCountLikes(count);
     }
-
-    public List<Genre> getAllGenre() {
-        return filmStorage.getAllGenre();
+    public UserService getUserService() {
+        return userService;
     }
 
-    public Genre getGenreById(Integer id) {
-        return filmStorage.getGenreById(id);
-    }
-
-    public List<Mpa> getAllMpa() {
-        return filmStorage.getAllMpa();
-    }
-
-    public Mpa getMpaById(Integer id) {
-        return filmStorage.getMpaById(id);
-    }
 }

@@ -51,7 +51,7 @@ public class UserControllerWithDaoTest {
                 .birthday(LocalDate.of(1962, 12, 17))
                 .build();
         userStorage.addUser(firstUser);
-        assertEquals("Джим", userStorage.getOrValidUserById(1).getName());
+        assertEquals("Джим", userStorage.getUserById(1).getName());
     }
     @Test
     public void updateUserTest() {
@@ -72,7 +72,7 @@ public class UserControllerWithDaoTest {
                 .build();
         userStorage.updateUser(secondUser);
 
-        assertEquals("Джефф", userStorage.getOrValidUserById(1).getName());
+        assertEquals("Джефф", userStorage.getUserById(1).getName());
     }
     @Test
     public void removeUserTest() {
@@ -105,12 +105,12 @@ public class UserControllerWithDaoTest {
                 .build();
         userStorage.addUser(secondUser);
 
-        assertEquals(secondUser.getName(), userStorage.getOrValidUserById(2).getName());
+        assertEquals(secondUser.getName(), userStorage.getUserById(2).getName());
 
         Throwable exception = assertThrows(
                 ValidationException.class,
                 () -> {
-                    userStorage.getOrValidUserById(3);
+                    userStorage.getUserById(3);
                 }
         );
         assertEquals("Пользователь c id - 3 не содержится в базе"
@@ -145,7 +145,7 @@ public class UserControllerWithDaoTest {
                 .birthday(LocalDate.of(1962, 1, 17))
                 .build();
         userStorage.addUser(firstUser);
-        assertEquals("Jim", userStorage.getOrValidUserById(1).getName());
+        assertEquals("Jim", userStorage.getUserById(1).getName());
     }
     @Test
     public void addUserWithNullLoginTest() {
@@ -187,8 +187,8 @@ public class UserControllerWithDaoTest {
         userStorage.addUser(firstUser);
         userStorage.addUser(secondUser);
         userStorage.addFriend(1, 2);
-                assertEquals(1, userStorage.getOrValidUserById(1).getFriends().size());
-                assertEquals(0, userStorage.getOrValidUserById(2).getFriends().size());
+                assertEquals(1, userStorage.getUserById(1).getFriends().size());
+                assertEquals(0, userStorage.getUserById(2).getFriends().size());
     }
     @Test
     public void getFriendsByIdTest() {
@@ -209,7 +209,7 @@ public class UserControllerWithDaoTest {
         userStorage.addUser(firstUser);
         userStorage.addUser(secondUser);
         userStorage.addFriend(1, 2);
-        List<User> listUser = new ArrayList<>(Collections.singleton(userStorage.getOrValidUserById(2)));
+        List<User> listUser = new ArrayList<>(Collections.singleton(userStorage.getUserById(2)));
 
         assertEquals(new HashSet<>(listUser), userStorage.getFriendsById(1));
     }
@@ -244,7 +244,7 @@ public class UserControllerWithDaoTest {
         userStorage.addFriend(3, 2);
         userStorage.addFriend(1, 2);
 
-        assertEquals(Stream.of(userStorage.getOrValidUserById(2)).collect(Collectors.toSet()),
+        assertEquals(Stream.of(userStorage.getUserById(2)).collect(Collectors.toSet()),
                 userStorage.getCommonFriends(1,3));
     }
     @Test
@@ -268,6 +268,6 @@ public class UserControllerWithDaoTest {
         userStorage.addFriend(1, 2);
         userStorage.removeFriend(1, 2);
 
-        assertEquals(0, userStorage.getOrValidUserById(1).getFriends().size());
+        assertEquals(0, userStorage.getUserById(1).getFriends().size());
     }
 }

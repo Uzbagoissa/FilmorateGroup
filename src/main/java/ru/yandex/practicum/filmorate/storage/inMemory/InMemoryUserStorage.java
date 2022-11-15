@@ -65,14 +65,14 @@ public class InMemoryUserStorage implements UserStorage {
         return new ArrayList<>(users.values()) ;
     }
     @Override
-    public User getOrValidUserById(Integer userId) {
+    public User getUserById(Integer userId) {
         validUser(users.get(userId));
         return users.get(userId);
     }
     @Override
     public User addFriend(Integer userId, Integer friendId){
-        validUser(getOrValidUserById(userId));
-        validUser(getOrValidUserById(friendId));
+        validUser(getUserById(userId));
+        validUser(getUserById(friendId));
 
         User user = getMapUsers().get(userId);
         user.setFriends(new HashSet<>());
@@ -87,7 +87,7 @@ public class InMemoryUserStorage implements UserStorage {
     }
     @Override
     public Set<User> getFriendsById(Integer userId){
-        validUser(getOrValidUserById(userId));
+        validUser(getUserById(userId));
 
         User user = getUsers().get(userId);
 
@@ -96,8 +96,8 @@ public class InMemoryUserStorage implements UserStorage {
     }
     @Override
     public Set<User> getCommonFriends(Integer userId, Integer otherId){
-        validUser(getOrValidUserById(userId));
-        validUser(getOrValidUserById(otherId));
+        validUser(getUserById(userId));
+        validUser(getUserById(otherId));
 
         User user = getMapUsers().get(userId);
         Set<Integer> listUserFriends = user.getFriends();
@@ -115,8 +115,8 @@ public class InMemoryUserStorage implements UserStorage {
     }
     @Override
     public User removeFriend(Integer userId, Integer friendId){
-        validUser(getOrValidUserById(userId));
-        validUser(getOrValidUserById(friendId));
+        validUser(getUserById(userId));
+        validUser(getUserById(friendId));
 
         User user = getUsers().get(userId);
         user.getFriends().remove(friendId);
@@ -142,7 +142,7 @@ public class InMemoryUserStorage implements UserStorage {
     private Set<User> fillUserToSet(Set<Integer> userIdSet){
         Set<User> setUser = new HashSet<>();
         for (Integer userId : userIdSet) {
-            setUser.add(getOrValidUserById(userId));
+            setUser.add(getUserById(userId));
         }
         return setUser;
     }

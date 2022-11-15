@@ -6,11 +6,10 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Component;
-import ru.yandex.practicum.filmorate.exceptions.EmptyResultFromDataBaseException;
 import ru.yandex.practicum.filmorate.exceptions.ValidationException;
 import ru.yandex.practicum.filmorate.models.Film;
-import ru.yandex.practicum.filmorate.models.Genre;
-import ru.yandex.practicum.filmorate.models.Mpa;
+import ru.yandex.practicum.filmorate.services.GenreService;
+import ru.yandex.practicum.filmorate.services.MpaService;
 import ru.yandex.practicum.filmorate.storage.interf.FilmStorage;
 
 import java.sql.*;
@@ -23,9 +22,13 @@ import java.util.Objects;
 public class DaoFilmStorage implements FilmStorage {
 
     private final JdbcTemplate jdbcTemplate;
+    private final MpaService mpaService;
+    private final GenreService genreService;
 
     public DaoFilmStorage(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
+        this.mpaService = new MpaService(new DaoMpaStorage(jdbcTemplate));
+        this.genreService = new GenreService(new DaoGenreStorage(jdbcTemplate));
     }
 
     @Override
@@ -37,7 +40,7 @@ public class DaoFilmStorage implements FilmStorage {
     }
 
     @Override
-    public Film getOrValidFilmById(Integer filmId) {
+    public Film getFilmById(Integer filmId) {
         try {
             String sqlQuery = "SELECT id, name, description, release_date, duration, rate, mpa " +
                     "FROM films " +
@@ -69,14 +72,14 @@ public class DaoFilmStorage implements FilmStorage {
         int id = Objects.requireNonNull(keyHolder.getKey()).intValue();
         film.setId(id);
 
-        addOrUpdateGenre(film);
+        genreService.addOrUpdateFilmGenres(film);
 
-        return getOrValidFilmById(id);
+        return getFilmById(id);
     }
 
     @Override
     public Film updateFilm(Film film) {
-        getOrValidFilmById(film.getId());
+        getFilmById(film.getId());
         String sqlQuery = "UPDATE films SET " +
                 "name = ?, description = ?, release_date = ?, duration = ?, rate = ?, mpa = ? " +
                 "WHERE id = ?";
@@ -90,9 +93,9 @@ public class DaoFilmStorage implements FilmStorage {
                 , film.getMpa().getId()
                 , film.getId());
 
-        addOrUpdateGenre(film);
+        genreService.addOrUpdateFilmGenres(film);
 
-        return getOrValidFilmById(film.getId());
+        return getFilmById(film.getId());
     }
 
     @Override
@@ -118,7 +121,7 @@ public class DaoFilmStorage implements FilmStorage {
                 "VALUES(?, ?)";
 
         jdbcTemplate.update(sqlQuery, userId, filmId);
-        return getOrValidFilmById(filmId);
+        return getFilmById(filmId);
     }
 
     @Override
@@ -128,79 +131,18 @@ public class DaoFilmStorage implements FilmStorage {
                 "WHERE id_user = ? AND id_film = ? ";
 
         jdbcTemplate.update(sqlQuery, userId, filmId);
-        return getOrValidFilmById(filmId);
+        return getFilmById(filmId);
     }
 
     @Override
     public List<Film> getMostPopularFilmByCountLikes(Integer cnt) {
-        String sqlQuery = "SELECT f.* " +
-                "FROM films AS f " +
-                "LEFT JOIN likes AS l ON l.id_film = f.id " +
-                "GROUP BY f.id " +
-                "ORDER BY COUNT(l.id_user) DESC " +
+        String sqlQuery = "SELECT films.* " +
+                "FROM films " +
+                "LEFT JOIN likes ON likes.id_film = films.id " +
+                "GROUP BY films.id " +
+                "ORDER BY COUNT(likes.id_user) DESC " +
                 "LIMIT ?";
         return jdbcTemplate.query(sqlQuery, this::mapRowToFilms, cnt);
-    }
-
-    @Override
-    public List<Genre> getAllGenre() {
-        String sqlQuery = "SELECT * " +
-                "FROM genres ";
-
-        return jdbcTemplate.query(sqlQuery, this::mapRowToGenre);
-    }
-
-    @Override
-    public Genre getGenreById(Integer id) {
-        String sqlQuery = "SELECT * " +
-                "FROM genres " +
-                "WHERE id = ?";
-        Genre genre;
-
-        try {
-            genre = jdbcTemplate.queryForObject(sqlQuery, this::mapRowToGenre, id);
-            return genre;
-        } catch (Exception e) {
-            throw new EmptyResultFromDataBaseException("Mpa c id: " + id + " не найден");
-        }
-    }
-
-    @Override
-    public List<Mpa> getAllMpa() {
-        String sqlQuery = "SELECT * " +
-                "FROM mpa";
-
-        return jdbcTemplate.query(sqlQuery, this::mapRowToMpa);
-    }
-
-    @Override
-    public Mpa getMpaById(Integer id) {
-        String sqlQuery = "SELECT * " +
-                "FROM mpa " +
-                "WHERE id = ?";
-        try {
-            Mpa mpa;
-            mpa = jdbcTemplate.queryForObject(sqlQuery, this::mapRowToMpa, id);
-            return mpa;
-        } catch (Exception e) {
-            throw new EmptyResultFromDataBaseException("Mpa c id: " + id + " не найден");
-        }
-    }
-    private void checkMpaIsNull(PreparedStatement ps, Film film) throws SQLException {
-        if(film.getMpa() != null){
-            ps.setInt(6, film.getMpa().getId());
-        } else if (film.getMpa() == null)  {
-            throw new DataIntegrityViolationException("MPA не может быть null");
-        } else if (film.getMpa().getId() < 1 || film.getMpa().getId() > 5) {
-            throw new ValidationException("Данного рейтинга еще не существует");
-        }
-    }
-
-    private Mpa mapRowToMpa(ResultSet resultSet, int i) throws SQLException {
-        return Mpa.builder()
-                .id(resultSet.getInt("id"))
-                .name(resultSet.getString("name"))
-                .build();
     }
     private Film mapRowToFilms(ResultSet resultSet, int i) throws SQLException {
         return Film.builder()
@@ -209,58 +151,13 @@ public class DaoFilmStorage implements FilmStorage {
                 .description(resultSet.getString("description"))
                 .releaseDate(resultSet.getDate("release_date").toLocalDate())
                 .duration(resultSet.getInt("duration"))
-                .likes(new HashSet<>(getLikesFromIdsUsers(resultSet.getInt("id"))))
+                .likes(new HashSet<>(getLikesFromUserByFilmId(resultSet.getInt("id"))))
                 .rate(resultSet.getInt("rate"))
-                .mpa(getMpaById(resultSet.getInt("mpa")))
-                .genres(getListGenresByIdFilm(resultSet.getInt("id")))
+                .mpa(mpaService.getMpaById(Integer.valueOf(resultSet.getString("mpa"))))
+                .genres(genreService.getGenresByIdFilm(resultSet.getInt("id")))
                 .build();
     }
-
-    private Genre mapRowToGenre(ResultSet resultSet, int i) throws SQLException {
-        return Genre.builder()
-                .id(resultSet.getInt("id"))
-                .name(resultSet.getString("name"))
-                .build();
-    }
-
-    private void addOrUpdateGenre(Film film) {
-        int id = film.getId();
-
-        if (film.getGenres() != null) {
-            String sqlGenre = "DELETE " +
-                    "FROM film_genres " +
-                    "WHERE id_film = ? ";
-            jdbcTemplate.update(sqlGenre, film.getId());
-
-            for (Genre genre : film.getGenres()) {
-                sqlGenre = "MERGE INTO film_genres(id_film, id_genre) " +
-                        "VALUES (?, ?)";
-
-                jdbcTemplate.update(sqlGenre, id, genre.getId());
-            }
-        } else {
-            String sqlGenre = "DELETE " +
-                    "FROM film_genres " +
-                    "WHERE id_film = ? ";
-
-            jdbcTemplate.update(sqlGenre, film.getId());
-        }
-    }
-
-    private List<Genre> getListGenresByIdFilm(int id) {
-        String sqlQuery = "SELECT * " +
-                "FROM genres " +
-                "WHERE id IN" +
-                "(" +
-                "SELECT id_genre " +
-                "FROM film_genres " +
-                "WHERE id_film = ?" +
-                ")";
-
-        return jdbcTemplate.query(sqlQuery, this::mapRowToGenre, id);
-    }
-
-    private List<Integer> getLikesFromIdsUsers(int id) {
+    private List<Integer> getLikesFromUserByFilmId(int id) {
         String sqlQuery = "SELECT id " +
                 "FROM users " +
                 "WHERE id IN" +
@@ -276,5 +173,15 @@ public class DaoFilmStorage implements FilmStorage {
                 ")";
 
         return jdbcTemplate.queryForList(sqlQuery, Integer.class, id);
+    }
+
+    private void checkMpaIsNull(PreparedStatement ps, Film film) throws SQLException {
+        if(film.getMpa() != null){
+            ps.setInt(6, film.getMpa().getId());
+        } else if (film.getMpa() == null)  {
+            throw new DataIntegrityViolationException("MPA не может быть null");
+        } else if (film.getMpa().getId() < 1 || film.getMpa().getId() > 5) {
+            throw new ValidationException("Данного рейтинга еще не существует");
+        }
     }
 }

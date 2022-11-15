@@ -16,16 +16,16 @@ public class User {
 
     private int id;
 
-    @Email
+    @Email(message = "Неверные данные: ошибка в записи email")
     private String email;
 
     @NotNull
-    @NotBlank
+    @NotBlank(message = "Неверные данные: имя пустое или содержит только пробелы")
     private String login;
 
     private String name;
 
-    @Past
+    @Past(message = "Неверные данные: День рождения не может быть в будущем")
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate birthday;
 

@@ -23,7 +23,7 @@ public class DaoUserStorage implements UserStorage {
     }
 
     @Override
-    public User getOrValidUserById(Integer userId) {
+    public User getUserById(Integer userId) {
         try{
             String sqlQuery = "SELECT id, name, email, login, birthday " +
                     "FROM users " +
@@ -50,7 +50,7 @@ public class DaoUserStorage implements UserStorage {
         }, keyHolder);
         int id = Objects.requireNonNull(keyHolder.getKey()).intValue();
 
-        return getOrValidUserById(id);
+        return getUserById(id);
     }
 
     @Override
@@ -65,7 +65,7 @@ public class DaoUserStorage implements UserStorage {
                 , user.getLogin()
                 , user.getBirthday()
                 , user.getId());
-        return getOrValidUserById(user.getId());
+        return getUserById(user.getId());
     }
 
     @Override
@@ -99,20 +99,20 @@ public class DaoUserStorage implements UserStorage {
 
     @Override
     public User addFriend(Integer userId, Integer friendId) {
-        getOrValidUserById(userId);
-        getOrValidUserById(friendId);
+        getUserById(userId);
+        getUserById(friendId);
 
         String sqlQueryInsertFriend = "MERGE INTO users_friends(id_user_one, id_user_two)" +
                 "VALUES (?, ?)";
 
         jdbcTemplate.update(sqlQueryInsertFriend, userId, friendId);
         log.info("У пользоателя с id: {} добавлен новый друг с id: {} ", userId, friendId);
-        return getOrValidUserById(userId);
+        return getUserById(userId);
     }
 
     @Override
     public Set<User> getFriendsById(Integer userId) {
-        getOrValidUserById(userId);
+        getUserById(userId);
 
         String sqlQuery = "SELECT * " +
                 "FROM users " +
@@ -135,7 +135,7 @@ public class DaoUserStorage implements UserStorage {
 
         jdbcTemplate.update(sqlQuery, userId, friendId);
         log.info("У пользоателя с id: {} удален друг с id: {} ", userId, friendId);
-        return getOrValidUserById(userId);
+        return getUserById(userId);
     }
 
     @Override

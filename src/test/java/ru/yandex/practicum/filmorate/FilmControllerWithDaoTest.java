@@ -20,8 +20,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 @AutoConfigureTestDatabase
@@ -33,41 +32,9 @@ public class FilmControllerWithDaoTest {
     Film firstFilm;
     Film secondFilm;
     Film thirdFilm;
-    private static final List<Genre> listGenre = new ArrayList<>();
     private static final List<Mpa> listMpa = new ArrayList<>();
 
     static {
-        Genre genre1 = Genre.builder()
-                .id(1)
-                .name("Комедия")
-                .build();
-        Genre genre2 = Genre.builder()
-                .id(2)
-                .name("Драма")
-                .build();
-        Genre genre3 = Genre.builder()
-                .id(3)
-                .name("Мультфильм")
-                .build();
-        Genre genre4 = Genre.builder()
-                .id(4)
-                .name("Триллер")
-                .build();
-        Genre genre5 = Genre.builder()
-                .id(5)
-                .name("Документальный")
-                .build();
-        Genre genre6 = Genre.builder()
-                .id(7)
-                .name("Боевик")
-                .build();
-        listGenre.add(genre1);
-        listGenre.add(genre2);
-        listGenre.add(genre3);
-        listGenre.add(genre4);
-        listGenre.add(genre5);
-        listGenre.add(genre6);
-
         Mpa mpa1 = Mpa.builder()
                 .id(1)
                 .name("G")
@@ -118,7 +85,7 @@ public class FilmControllerWithDaoTest {
                 .build();
         filmStorage.addFilm(firstFilm);
 
-        assertEquals("Маска", filmStorage.getOrValidFilmById(1).getName());
+        assertEquals("Маска", filmStorage.getFilmById(1).getName());
     }
 
     @Test
@@ -142,7 +109,7 @@ public class FilmControllerWithDaoTest {
         filmStorage.addFilm(firstFilm);
         filmStorage.updateFilm(secondFilm);
 
-        assertEquals("Тупой и еще тупее", filmStorage.getOrValidFilmById(1).getName());
+        assertEquals("Тупой и еще тупее", filmStorage.getFilmById(1).getName());
     }
 
     @Test
@@ -185,7 +152,7 @@ public class FilmControllerWithDaoTest {
     }
 
     @Test
-    public void getUsersTest() {
+    public void getFilmTest() {
         firstFilm = Film.builder()
                 .description("Описание")
                 .releaseDate(LocalDate.of(1994, 12, 14))
@@ -207,7 +174,7 @@ public class FilmControllerWithDaoTest {
     }
 
     @Test
-    public void getUserByIdTest() {
+    public void getFilmByIdTest() {
         firstFilm = Film.builder()
                 .description("Описание")
                 .releaseDate(LocalDate.of(1994, 12, 14))
@@ -226,18 +193,66 @@ public class FilmControllerWithDaoTest {
                 .build();
         filmStorage.addFilm(secondFilm);
 
-        assertEquals(secondFilm.getName(), filmStorage.getOrValidFilmById(2).getName());
+        assertEquals(secondFilm.getName(), filmStorage.getFilmById(2).getName());
 
         Throwable exception = assertThrows(
                 ValidationException.class,
                 () -> {
-                    filmStorage.getOrValidFilmById(3);
+                    filmStorage.getFilmById(3);
                 }
         );
         assertEquals("Фильм c id: 3 не содержится в базе"
                 , exception.getMessage());
     }
+    @Test
+    public void addLikeFromUserByIdTest() {
+        firstFilm = Film.builder()
+                .description("Описание")
+                .releaseDate(LocalDate.of(1994, 12, 14))
+                .duration(101)
+                .name("Маска")
+                .mpa(listMpa.get(1))
+                .build();
+        filmStorage.addFilm(firstFilm);
 
+        User firstUser = User.builder()
+                .email("jim@email.com")
+                .login("Jim")
+                .name("Джим")
+                .birthday(LocalDate.of(1962, 1, 17))
+                .build();
+        userStorage.addUser(firstUser);
+        filmStorage.addLikeFromUserById(1,1);
+
+        assertEquals(userStorage.getUserById(1).getLogin()
+                , userStorage.getUserById(new ArrayList<>(filmStorage.getFilmById(1).getLikes()).get(0)).getLogin()
+        , "Неверный список лайков" );
+    }
+    @Test
+    public void removeLikeFromUserByIdTest() {
+        firstFilm = Film.builder()
+                .description("Описание")
+                .releaseDate(LocalDate.of(1994, 12, 14))
+                .duration(101)
+                .name("Маска")
+                .mpa(listMpa.get(1))
+                .build();
+        filmStorage.addFilm(firstFilm);
+
+        User firstUser = User.builder()
+                .email("jim@email.com")
+                .login("Jim")
+                .name("Джим")
+                .birthday(LocalDate.of(1962, 1, 17))
+                .build();
+        userStorage.addUser(firstUser);
+        filmStorage.addLikeFromUserById(1,1);
+        filmStorage.removeLikeFromUserById(1,1);
+
+        assertEquals(0
+                , new ArrayList<>(filmStorage.getFilmById(1).getLikes()).size()
+                , "Пользователь не удалился из списка пользовтелей поставившиз лайк" );
+    }
     @Test
     public void getMostPopularFilmByCountLikes() {
         User firstUser = User.builder()
