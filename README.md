@@ -1,6 +1,6 @@
 # java-filmorate
 Template repository for Filmorate project.
-![diagram](https://github.com/EvgenyBelykh/java-filmorate/blob/main/filmorate%20(5).png)
+![diagram](https://github.com/EvgenyBelykh/java-filmorate/blob/main/filmorate%20(6).png)
 
 ## Code from dbdiagram.io:
 
@@ -12,31 +12,22 @@ Template repository for Filmorate project.
 }
 
 Table users as U{
-  id_user int [pk, increment]
+  id int [pk, increment]
   name varchar
-  email email [unique]
+  email varchar [unique]
   login varchar [not null]
-  birthday date
+  birthday timestamp
 }
 
 Table films as F {
-  id_film int [pk, increment]
+  id int [pk, increment]
   name varchar
   description varchar
-  release_date date
+  release_date timestamp
   duration int
   rate int
-  id_mpa int
+  mpa varchar
 }
-
-enum genre{
-    COMEDY
-    DRAMA
-    CARTOON
-    THRILLER
-    DOCUMENTARY
-    ACTION
-  }
   
 Table film_genres {
   id_film int [pk]
@@ -44,21 +35,13 @@ Table film_genres {
 }
 
 Table genres {
-  id_genre int [pk]
-  genre genre
+  id int [pk]
+  name genre
 }
 
 Table mpa {
-  id_mpa int [pk]
-  mpa mpa
-}
-
-enum mpa{
-    G
-    PG
-    PG_13
-    R
-    NC_17
+  id int [pk]
+  name mpa
 }
 
 Table likes {
@@ -71,11 +54,11 @@ Table users_friends{
   id_user_two int [pk]
 }
 
-Ref: U.id_user < likes.id_user
-Ref: F.id_film < likes.id_film
-Ref: U.id_user < users_friends.id_user_one
-Ref: U.id_user < users_friends.id_user_two
-Ref: genres.id_genre < film_genres.id_genre
-Ref: F.id_film < film_genres.id_film
-Ref: mpa.id_mpa > F.id_mpa
+Ref: U.id < likes.id_user
+Ref: F.id < likes.id_film
+Ref: U.id < users_friends.id_user_one
+Ref: U.id < users_friends.id_user_two
+Ref: genres.id < film_genres.id_genre
+Ref: F.id < film_genres.id_film
+Ref: mpa.id > F.id
    ```
