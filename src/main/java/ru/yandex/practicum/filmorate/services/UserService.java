@@ -25,7 +25,6 @@ public class UserService {
         return user;
     }
     public User addUser(User user){
-        validUser(user);
         User curUser = userStorage.addUser(user);
         log.info("В базу добавлен пользователь под id: {}", curUser.getId());
         return curUser;
@@ -67,8 +66,5 @@ public class UserService {
 
         log.info("Возвращены общие друзья {} пользователей c id: {} и {}",setFriends.toString(), userId, otherId);
         return setFriends;
-    }
-    private void validUser(User user) {
-
     }
 }
