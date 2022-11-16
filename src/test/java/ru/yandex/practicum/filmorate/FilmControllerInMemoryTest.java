@@ -10,21 +10,23 @@ import ru.yandex.practicum.filmorate.models.Film;
 import ru.yandex.practicum.filmorate.models.User;
 import ru.yandex.practicum.filmorate.services.FilmService;
 import ru.yandex.practicum.filmorate.services.UserService;
+import ru.yandex.practicum.filmorate.storage.inMemory.InMemoryFilmStorage;
+import ru.yandex.practicum.filmorate.storage.inMemory.InMemoryUserStorage;
 
 import java.time.LocalDate;
 import java.util.Collections;
 
-import static java.time.Month.JANUARY;
-import static java.util.Calendar.*;
-import static org.junit.jupiter.api.Assertions.*;
-import static ru.yandex.practicum.filmorate.storage.InMemoryFilmStorage.DATE_FIRST_FILM;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static ru.yandex.practicum.filmorate.storage.inMemory.InMemoryFilmStorage.DATE_FIRST_FILM;
 
-class FilmControllerTest {
+class FilmControllerInMemoryTest {
 
     FilmController filmController;
     @BeforeEach
     void setUp() {
-        this.filmController = new FilmController(new FilmService(new UserService()));
+        this.filmController = new FilmController(new FilmService(new UserService(new InMemoryUserStorage())
+                , new InMemoryFilmStorage()));
     }
 
     @Test
@@ -32,7 +34,7 @@ class FilmControllerTest {
         Film film = Film.builder()
                 .id(0)
                 .description("Описание")
-                .releaseDate(LocalDate.of(1825, DECEMBER, 14))
+                .releaseDate(LocalDate.of(1825, 12, 14))
                 .duration(101)
                 .name("Маска")
                 .build();
@@ -52,7 +54,7 @@ class FilmControllerTest {
         Film firstFilm = Film.builder()
                 .id(1)
                 .description("Описание")
-                .releaseDate(LocalDate.of(1994, JULY, 28))
+                .releaseDate(LocalDate.of(1994, 7, 28))
                 .duration(101)
                 .name("Маска")
                 .build();
@@ -60,7 +62,7 @@ class FilmControllerTest {
         Film secondFilm = Film.builder()
                 .id(1)
                 .description("Описание")
-                .releaseDate(LocalDate.of(1994, DECEMBER, 6))
+                .releaseDate(LocalDate.of(1994, 12, 6))
                 .duration(107)
                 .name("Тупой и еще тупее")
                 .build();
@@ -81,7 +83,7 @@ class FilmControllerTest {
         Film firstFilm = Film.builder()
                 .id(1)
                 .description("Описание")
-                .releaseDate(LocalDate.of(1994, JULY, 28))
+                .releaseDate(LocalDate.of(1994, 7, 28))
                 .duration(101)
                 .name("Маска")
                 .build();
@@ -89,7 +91,7 @@ class FilmControllerTest {
         Film secondFilm = Film.builder()
                 .id(3)
                 .description("Описание")
-                .releaseDate(LocalDate.of(1994, DECEMBER, 6))
+                .releaseDate(LocalDate.of(1994, 12, 6))
                 .duration(107)
                 .name("Тупой и еще тупее")
                 .build();
@@ -101,7 +103,7 @@ class FilmControllerTest {
                     filmController.updateFilm(secondFilm);
                 }
         );
-        assertEquals("Фильм - " + secondFilm.getName() + " c id - " + secondFilm.getId() +
+        assertEquals("Фильм  c id - " + secondFilm.getId() +
                         " не содержится в базе",
                 exception.getMessage());
     }
@@ -112,7 +114,7 @@ class FilmControllerTest {
                 .email("jim@email.com")
                 .login("Jim")
                 .name("Джим")
-                .birthday(LocalDate.of(1962, JANUARY, 17))
+                .birthday(LocalDate.of(1962, 1, 17))
                 .build();
 
         User secondUser = User.builder()
@@ -120,7 +122,7 @@ class FilmControllerTest {
                 .email("jeff@email.com")
                 .login("Jeff")
                 .name("Джефф")
-                .birthday(LocalDate.of(1955, FEBRUARY, 19))
+                .birthday(LocalDate.of(1955, 2, 19))
                 .build();
 
         User thirdUser = User.builder()
@@ -128,13 +130,13 @@ class FilmControllerTest {
                 .email("Diaz@email.com")
                 .login("Cameron")
                 .name("Кэмерон")
-                .birthday(LocalDate.of(1972, AUGUST, 30))
+                .birthday(LocalDate.of(1972, 8, 30))
                 .build();
 
         Film firstFilm = Film.builder()
                 .id(1)
                 .description("Описание")
-                .releaseDate(LocalDate.of(1994, JULY, 28))
+                .releaseDate(LocalDate.of(1994, 7, 28))
                 .duration(101)
                 .name("Маска")
                 .build();
@@ -142,7 +144,7 @@ class FilmControllerTest {
         Film secondFilm = Film.builder()
                 .id(3)
                 .description("Описание")
-                .releaseDate(LocalDate.of(1994, DECEMBER, 6))
+                .releaseDate(LocalDate.of(1994, 12, 6))
                 .duration(107)
                 .name("Тупой и еще тупее")
                 .build();
@@ -150,7 +152,7 @@ class FilmControllerTest {
         Film thirdFilm = Film.builder()
                 .id(3)
                 .description("Описание")
-                .releaseDate(LocalDate.of(2004, MARCH, 9))
+                .releaseDate(LocalDate.of(2004, 3, 9))
                 .duration(108)
                 .name("Вечное сияние чистого разума")
                 .build();

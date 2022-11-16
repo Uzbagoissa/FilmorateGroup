@@ -29,8 +29,8 @@ public class FilmController {
     }
 
     @GetMapping("/{id}")
-    public Film getFilm(@PathVariable("id") Integer filmId) {
-        return filmService.getFilm(filmId);
+    public Film getFilmById(@PathVariable("id") Integer filmId) {
+        return filmService.getFilmById(filmId);
     }
 
     @PostMapping
@@ -44,8 +44,8 @@ public class FilmController {
     }
 
     @DeleteMapping
-    public Film removeFilm(@RequestBody Film film) {
-        return filmService.removeFilm(film);
+    public void removeFilm(@RequestBody Film film) {
+        filmService.removeFilm(film);
     }
 
 
@@ -65,7 +65,6 @@ public class FilmController {
         if (count < 0) {
             throw new IncorrectParameterException("count");
         }
-
         return filmService.getMostPopularFilmByCountLikes(count);
     }
 }

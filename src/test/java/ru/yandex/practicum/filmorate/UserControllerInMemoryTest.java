@@ -6,23 +6,22 @@ import ru.yandex.practicum.filmorate.controllers.UserController;
 import ru.yandex.practicum.filmorate.exceptions.ValidationException;
 import ru.yandex.practicum.filmorate.models.User;
 import ru.yandex.practicum.filmorate.services.UserService;
+import ru.yandex.practicum.filmorate.storage.inMemory.InMemoryUserStorage;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static java.time.Month.JANUARY;
-import static java.util.Calendar.AUGUST;
-import static java.util.Calendar.FEBRUARY;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
-class UserControllerTest {
+class UserControllerInMemoryTest {
     UserController userController;
 
     @BeforeEach
     void setUp() {
-        this.userController = new UserController( new UserService());
+        this.userController = new UserController( new UserService(new InMemoryUserStorage()));
     }
 
     @Test
@@ -32,7 +31,7 @@ class UserControllerTest {
                 .email("jim@email.com")
                 .login("Jim")
                 .name(" ")
-                .birthday(LocalDate.of(1962, JANUARY, 17))
+                .birthday(LocalDate.of(1962, 1, 17))
                 .build();
         userController.addUser(user);
         assertEquals("Jim", user.getName());
@@ -45,7 +44,7 @@ class UserControllerTest {
                 .email("jim@email.com")
                 .login("Jim")
                 .name("Джим")
-                .birthday(LocalDate.of(1962, JANUARY, 17))
+                .birthday(LocalDate.of(1962, 1, 17))
                 .build();
 
         User secondUser = User.builder()
@@ -53,7 +52,7 @@ class UserControllerTest {
                 .email("jeff@email.com")
                 .login("Jeff")
                 .name("Джефф")
-                .birthday(LocalDate.of(1955, FEBRUARY, 19))
+                .birthday(LocalDate.of(1955, 2, 19))
                 .build();
 
         userController.addUser(firstUser);
@@ -74,7 +73,7 @@ class UserControllerTest {
                 .email("jim@email.com")
                 .login("Jim")
                 .name("Джим")
-                .birthday(LocalDate.of(1962, JANUARY, 17))
+                .birthday(LocalDate.of(1962, 1, 17))
                 .build();
         userController.addUser(firstUser);
         userController.removeUser(firstUser);
@@ -88,7 +87,7 @@ class UserControllerTest {
                 .email("jim@email.com")
                 .login("Jim")
                 .name("Джим")
-                .birthday(LocalDate.of(1962, JANUARY, 17))
+                .birthday(LocalDate.of(1962, 1, 17))
                 .build();
 
         User secondUser = User.builder()
@@ -96,7 +95,7 @@ class UserControllerTest {
                 .email("jeff@email.com")
                 .login("Jeff")
                 .name("Джефф")
-                .birthday(LocalDate.of(1955, FEBRUARY, 19))
+                .birthday(LocalDate.of(1955, 2, 19))
                 .build();
 
         userController.addUser(firstUser);
@@ -113,7 +112,7 @@ class UserControllerTest {
                 .email("jim@email.com")
                 .login("Jim")
                 .name("Джим")
-                .birthday(LocalDate.of(1962, JANUARY, 17))
+                .birthday(LocalDate.of(1962, 1, 17))
                 .build();
 
         User secondUser = User.builder()
@@ -121,7 +120,7 @@ class UserControllerTest {
                 .email("jeff@email.com")
                 .login("Jeff")
                 .name("Джефф")
-                .birthday(LocalDate.of(1955, FEBRUARY, 19))
+                .birthday(LocalDate.of(1955, 2, 19))
                 .build();
 
         User thirdUser = User.builder()
@@ -129,7 +128,7 @@ class UserControllerTest {
                 .email("Diaz@email.com")
                 .login("Cameron")
                 .name("Кэмерон")
-                .birthday(LocalDate.of(1972, AUGUST, 30))
+                .birthday(LocalDate.of(1972, 8, 30))
                 .build();
 
         userController.addUser(firstUser);

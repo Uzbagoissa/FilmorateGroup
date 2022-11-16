@@ -1,7 +1,6 @@
 package ru.yandex.practicum.filmorate.models;
 
-import lombok.Builder;
-import lombok.Data;
+import lombok.*;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.validation.constraints.*;
@@ -10,23 +9,25 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 @Builder
 public class User {
 
     private int id;
 
-    @Email
+    @Email(message = "Неверные данные: ошибка в записи email")
     private String email;
 
     @NotNull
-    @NotBlank
+    @NotBlank(message = "Неверные данные: имя пустое или содержит только пробелы")
     private String login;
 
     private String name;
 
-    @Past
+    @Past(message = "Неверные данные: День рождения не может быть в будущем")
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate birthday;
 
-    private final Set<Integer> friends = new HashSet<>();
+    private Set<Integer> friends = new HashSet<>();
 }
