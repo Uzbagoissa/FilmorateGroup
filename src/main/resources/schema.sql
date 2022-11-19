@@ -1,3 +1,10 @@
+CREATE TABLE IF NOT EXISTS directors
+(
+    id       INTEGER PRIMARY KEY,
+    name     VARCHAR(64) NOT NULL,
+    CONSTRAINT   director_is_blank CHECK (name NOT LIKE ' ' AND name NOT LIKE '')
+);
+
 CREATE TABLE IF NOT EXISTS mpa
 (
     id       INTEGER PRIMARY KEY,
@@ -36,6 +43,7 @@ CREATE TABLE IF NOT EXISTS films
     duration     INTEGER,
     rate         INTEGER,
     mpa          VARCHAR(64),
+    director     VARCHAR(64),
     CONSTRAINT   length_duration
                  CHECK (duration > 0),
     CONSTRAINT   length_description
@@ -44,7 +52,8 @@ CREATE TABLE IF NOT EXISTS films
                  CHECK (name NOT LIKE ' ' AND NOT NULL),
     CONSTRAINT   after_first_film
                  CHECK (CAST (release_date AS DATE) > (CAST('1895-12-28' AS DATE))),
-    CONSTRAINT   mpas FOREIGN KEY (mpa) REFERENCES mpa (id)
+    CONSTRAINT   mpas FOREIGN KEY (mpa) REFERENCES mpa (id),
+    CONSTRAINT   directorss FOREIGN KEY (director) REFERENCES directors (id)
 );
 
 CREATE TABLE IF NOT EXISTS likes
@@ -72,4 +81,13 @@ CREATE TABLE IF NOT EXISTS film_genres
     CONSTRAINT   films FOREIGN KEY (id_film) REFERENCES films (id) ON DELETE CASCADE ON UPDATE CASCADE,
     CONSTRAINT   genres FOREIGN KEY (id_genre) REFERENCES genres (id) ON DELETE CASCADE ON UPDATE CASCADE,
     PRIMARY KEY (id_film, id_genre)
+);
+
+CREATE TABLE IF NOT EXISTS film_directors
+(
+    id_film      INTEGER NOT NULL,
+    id_director  INTEGER NOT NULL,
+    CONSTRAINT   films_dir FOREIGN KEY (id_film) REFERENCES films (id) ON DELETE CASCADE ON UPDATE CASCADE,
+    CONSTRAINT   directors_dir FOREIGN KEY (id_director) REFERENCES directors (id) ON DELETE CASCADE ON UPDATE CASCADE,
+    PRIMARY KEY (id_film, id_director)
 );
