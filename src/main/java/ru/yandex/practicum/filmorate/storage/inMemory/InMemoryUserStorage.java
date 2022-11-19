@@ -34,21 +34,22 @@ public class InMemoryUserStorage implements UserStorage {
     }
 
     @Override
-    public void removeUser(User user) {
-        validUser(user);
+    public void removeUser(int id) {
 
-        if(user.getFriends() != null){
-            List<Integer> setFriends = new ArrayList<>(user.getFriends());
+        validUser(users.get(id));
+
+        if(users.get(id).getFriends() != null){
+            List<Integer> setFriends = new ArrayList<>(users.get(id).getFriends());
             //удалить из списка друзей удаляемого пользователя
             for (Integer key : getMapUsers().keySet()) {
                 if(setFriends.contains(key)){
-                    getMapUsers().get(key).getFriends().remove(user.getId());
+                    getMapUsers().get(key).getFriends().remove(id);
                 }
             }
         }
 
 
-        users.remove(user.getId());
+        users.remove(id);
     }
 
     @Override
