@@ -39,8 +39,8 @@ public class FilmService {
     public Film updateFilm(Film film){
         return filmStorage.updateFilm(film);
     }
-    public void removeFilm(int id){
-        filmStorage.removeFilm(id);
+    public void removeFilm(Film film){
+        filmStorage.removeFilm(film);
     }
     public Film addLikeFromUserById(Integer filmId, Integer userId){
         Film film = filmStorage.getFilmById(filmId);
