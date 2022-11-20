@@ -74,7 +74,7 @@ public class FilmController {
             throw new IncorrectParameterException("genreId");
         }
 
-        if (year != null && (year.isBefore(Year.of(1985)) || year.isAfter(Year.now()))) {
+        if (year != null && (year.isBefore(Year.of(1895)) || year.isAfter(Year.now()))) {
             throw new IncorrectParameterException("year");
         }
 
