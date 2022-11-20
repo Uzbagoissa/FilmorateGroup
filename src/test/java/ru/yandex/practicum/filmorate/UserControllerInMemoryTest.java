@@ -76,7 +76,7 @@ class UserControllerInMemoryTest {
                 .birthday(LocalDate.of(1962, 1, 17))
                 .build();
         userController.addUser(firstUser);
-        userController.removeUser(1);
+        userController.removeUser(firstUser);
         assertEquals(new ArrayList<>(0),userController.getUsers());
     }
 
