@@ -144,20 +144,8 @@ public class DaoFilmStorage implements FilmStorage {
                 "LIMIT ?";
         return jdbcTemplate.query(sqlQuery, this::mapRowToFilms, cnt);
     }
-    private Film mapRowToFilms(ResultSet resultSet, int i) throws SQLException {
-        return Film.builder()
-                .id(resultSet.getInt("id"))
-                .name(resultSet.getString("name"))
-                .description(resultSet.getString("description"))
-                .releaseDate(resultSet.getDate("release_date").toLocalDate())
-                .duration(resultSet.getInt("duration"))
-                .likes(new HashSet<>(getLikesFromUserByFilmId(resultSet.getInt("id"))))
-                .rate(resultSet.getInt("rate"))
-                .mpa(mpaService.getMpaById(Integer.valueOf(resultSet.getString("mpa"))))
-                .genres(genreService.getGenresByIdFilm(resultSet.getInt("id")))
-                .build();
-    }
-    private List<Integer> getLikesFromUserByFilmId(int id) {
+
+    public List<Integer> getLikesFromUserByFilmId(int id) {
         String sqlQuery = "SELECT id " +
                 "FROM users " +
                 "WHERE id IN" +
@@ -173,6 +161,20 @@ public class DaoFilmStorage implements FilmStorage {
                 ")";
 
         return jdbcTemplate.queryForList(sqlQuery, Integer.class, id);
+    }
+
+    private Film mapRowToFilms(ResultSet resultSet, int i) throws SQLException {
+        return Film.builder()
+                .id(resultSet.getInt("id"))
+                .name(resultSet.getString("name"))
+                .description(resultSet.getString("description"))
+                .releaseDate(resultSet.getDate("release_date").toLocalDate())
+                .duration(resultSet.getInt("duration"))
+                .likes(new HashSet<>(getLikesFromUserByFilmId(resultSet.getInt("id"))))
+                .rate(resultSet.getInt("rate"))
+                .mpa(mpaService.getMpaById(Integer.valueOf(resultSet.getString("mpa"))))
+                .genres(genreService.getGenresByIdFilm(resultSet.getInt("id")))
+                .build();
     }
 
     private void checkMpaIsNull(PreparedStatement ps, Film film) throws SQLException {
