@@ -178,22 +178,22 @@ public class DaoUserStorage implements UserStorage {
     }
 
     public List<Film> getRecommendations(Integer userId) {
-        return jdbcTemplate.query("SELECT * FROM FILMS f " +
-                        "WHERE f.ID IN " +
-                        "(SELECT l2.ID_FILM  FROM LIKES l2 " +
-                        "WHERE l2.ID_USER IN " +
-                        "(SELECT ID_USER FROM LIKES l " +
-                        "WHERE l.ID_USER != ? " +
-                        "AND " +
-                        "l.ID_FILM IN " +
-                        "(SELECT l.ID_FILM FROM LIKES l " +
-                        "WHERE l.ID_USER = ?" +
-                        ")" +
-                        ") " +
-                        "GROUP BY l2.ID_FILM " +
-                        "HAVING l2.ID_FILM NOT IN (" +
-                        "SELECT l.ID_FILM FROM LIKES l WHERE l.ID_USER = ?)" +
-                        ")",
+        return jdbcTemplate.query(
+                "SELECT * FROM FILMS film " +
+                        "WHERE film.ID IN " +
+                            "(SELECT likes.ID_FILM  FROM LIKES likes " +
+                                "WHERE likes.ID_USER IN " +
+                                    "(SELECT ID_USER FROM LIKES l " +
+                                        "WHERE l.ID_USER != ? " +
+                                            "AND " +
+                                                "l.ID_FILM IN " +
+                                                    "(SELECT l.ID_FILM FROM LIKES l " +
+                                                        "WHERE l.ID_USER = ?)" +
+                                    ") " +
+                            "GROUP BY likes.ID_FILM " +
+                            "HAVING likes.ID_FILM NOT IN " +
+                                "(SELECT l.ID_FILM FROM LIKES l WHERE l.ID_USER = ?)" +
+                            ")",
                 this::mapRowToFilms,
                 userId, userId, userId);
     }
