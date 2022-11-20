@@ -69,7 +69,8 @@ public class FilmController {
     }
 
     @GetMapping("/common")
-    public List<Film> getCommonFilms(@RequestParam int userId, @RequestParam int friendId){
+    public List<Film> getCommonFilms(@RequestParam(value = "userId") int userId, @RequestParam(value = "friendId")
+        int friendId){
         return filmService.findCommon(userId, friendId);
     }
 }
