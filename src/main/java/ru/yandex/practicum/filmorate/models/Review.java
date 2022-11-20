@@ -5,15 +5,17 @@ import lombok.Data;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
+import java.util.HashSet;
+import java.util.Set;
 
 @Data
 public class Review {
-    private Long id;
+    private Long reviewId;
 
-    @Positive(message = "Введите корректный идентификатор пользователя")
+    @NotNull
     private Integer userId;
 
-    @Positive(message = "Введите корректный идентификатор фильма")
+    @NotNull
     private Integer filmId;
 
     @NotNull(message = "Поле Отзыв обязательно для заполнения")
@@ -23,6 +25,9 @@ public class Review {
     @NotNull
     private Boolean isPositive;
 
-    @NotNull
     private Long useful;
+
+    private Set<Long> likes = new HashSet<>();
+
+
 }
