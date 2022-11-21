@@ -84,3 +84,17 @@ CREATE TABLE IF NOT EXISTS reviews (
     CONSTRAINT fk_film_id FOREIGN KEY (film_id) REFERENCES films(id) ON DELETE CASCADE,
     CONSTRAINT fk_user_id FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );
+
+CREATE TABLE IF NOT EXISTS review_like (
+    review_id INTEGER,
+    user_id INTEGER,
+    CONSTRAINT fk_review_like_review_id FOREIGN KEY (review_id) REFERENCES reviews(review_id) ON DELETE CASCADE,
+    CONSTRAINT fk_review_like_user_id FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS review_dislike (
+    review_id INTEGER,
+    user_id INTEGER,
+    CONSTRAINT fk_review_dislike_review_id FOREIGN KEY (review_id) REFERENCES reviews(review_id) ON DELETE CASCADE,
+    CONSTRAINT fk_review_dislike_user_id FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);

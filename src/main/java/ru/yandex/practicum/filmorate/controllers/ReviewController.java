@@ -40,4 +40,22 @@ public class ReviewController {
         log.info("Endpoint request received: 'PUT reviews/{}'", review.toString());
         return reviewService.update(review);
     }
+
+    @PutMapping(value = "reviews/{reviewId}/like/{userId}")
+    public void addLikeToReview(@PathVariable Integer reviewId, @PathVariable Integer userId) {
+        log.info("Endpoint request received: 'PUT reviews/{}/like/{}'", reviewId, userId);
+        reviewService.addLikeToReview(reviewId, userId);
+    }
+
+    @PutMapping(value = "reviews/{reviewId}/dislike/{userId}")
+    public void addDisLikeToReview(@PathVariable Integer reviewId, @PathVariable Integer userId) {
+        log.info("Endpoint request received: 'PUT reviews/{}/dislike/{}'", reviewId, userId);
+        reviewService.addDisLikeToReview(reviewId, userId);
+    }
+
+    @DeleteMapping(value = "reviews/{reviewId}")
+    public void removeReview(@PathVariable Long reviewId) {
+        log.info("Endpoint request received: 'DELETE reviews/{}'", reviewId);
+        reviewService.delete(reviewId);
+    }
 }

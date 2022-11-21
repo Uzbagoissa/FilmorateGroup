@@ -3,7 +3,6 @@ package ru.yandex.practicum.filmorate.services;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.data.relational.core.sql.In;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exceptions.EmptyResultFromDataBaseException;
 import ru.yandex.practicum.filmorate.models.Review;
@@ -28,12 +27,10 @@ public class ReviewService {
     }
 
     public Review create(Review review) {
-        checkFilmsAndUsersAreExists(review);
         return reviewStorage.create(review);
     }
 
     public Review update(Review review) {
-        checkFilmsAndUsersAreExists(review);
         return reviewStorage.update(review);
     }
 
@@ -41,13 +38,15 @@ public class ReviewService {
         return reviewStorage.getById(reviewId);
     }
 
-    private void checkFilmsAndUsersAreExists(Review review) {
-        if (!reviewStorage.checkFilmExists(review.getFilmId())) {
-            throw new EmptyResultFromDataBaseException("Фильм с идентификатором " + review.getFilmId() + " отсутствует");
-        }
+    public void addLikeToReview(Integer reviewId, Integer userId) {
+        reviewStorage.addLikeToReview(reviewId, userId);
+    }
 
-        if (!reviewStorage.checkUserExists(review.getUserId())) {
-            throw new EmptyResultFromDataBaseException("Пользователь с идентификатором " + review.getFilmId() + " отсутствует");
-        }
+    public void addDisLikeToReview(Integer reviewId, Integer userId) {
+        reviewStorage.addDisLikeToReview(reviewId, userId);
+    }
+
+    public void delete(Long reviewId) {
+        reviewStorage.delete(reviewId);
     }
 }
