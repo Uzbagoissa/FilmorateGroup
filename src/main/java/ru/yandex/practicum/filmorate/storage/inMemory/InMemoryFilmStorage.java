@@ -9,6 +9,7 @@ import ru.yandex.practicum.filmorate.models.Film;
 import ru.yandex.practicum.filmorate.storage.interf.FilmStorage;
 
 import java.time.LocalDate;
+import java.time.Year;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -92,12 +93,18 @@ public class InMemoryFilmStorage implements FilmStorage {
     }
 
     @Override
-    public List<Film> getMostPopularFilmByCountLikes(Integer count) {
+    public List<Film> getMostPopularFilmByCountLikes(Integer count, Integer genreId, Year year) {
         return getFilms().stream()
                 .sorted(this::compare)
                 .limit(count)
                 .collect(Collectors.toList());
     }
+
+    @Override
+    public List<Film> getSortedFilmByDirector(Integer id, String sortBy) {
+        return null;
+    }
+
     private int compare(Film p0, Film p1) {
         return p1.getLikes().size() - p0.getLikes().size();
     }
