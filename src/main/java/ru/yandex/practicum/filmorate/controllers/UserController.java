@@ -39,8 +39,8 @@ public class UserController {
         return userService.updateUser(user);
     }
     @DeleteMapping
-    public void removeUser(@RequestBody User user){
-        userService.removeUser(user);
+    public void removeUser(@PathVariable("id") Integer id){
+        userService.removeUser(id);
     }
     @PutMapping("/{id}/friends/{friendId}")
     public User addFriend(@PathVariable("id") Integer userId, @PathVariable("friendId") Integer friendId){

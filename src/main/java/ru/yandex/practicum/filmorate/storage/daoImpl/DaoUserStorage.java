@@ -77,7 +77,7 @@ public class DaoUserStorage implements UserStorage {
     }
 
     @Override
-    public void removeUser (int id) {
+    public void removeUser (Integer id) {
         String sqlQuery = "DELETE " +
                 "FROM users " +
                 "WHERE id = ?";

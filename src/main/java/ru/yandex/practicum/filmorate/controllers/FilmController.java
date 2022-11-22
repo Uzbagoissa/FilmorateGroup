@@ -46,8 +46,8 @@ public class FilmController {
     }
 
     @DeleteMapping
-    public void removeFilm(@RequestBody Film film) {
-        filmService.removeFilm(film);
+    public void removeFilm(@PathVariable("id") Integer id) {
+        filmService.removeFilm(id);
     }
 
 
