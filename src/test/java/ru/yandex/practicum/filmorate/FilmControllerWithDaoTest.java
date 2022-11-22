@@ -585,7 +585,7 @@ public class FilmControllerWithDaoTest {
                 , "Вернулся неверный список фильмов");
     }
 
-    @Test
+   @Test
     public void getSortedFilmByDirectorTest() {
         Director director = Director.builder()
                 .id(1)

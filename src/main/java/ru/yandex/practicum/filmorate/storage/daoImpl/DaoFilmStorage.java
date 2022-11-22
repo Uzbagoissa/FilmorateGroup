@@ -203,6 +203,15 @@ public class DaoFilmStorage implements FilmStorage {
     }
 
     @Override
+    public List<Film> findCommon(int userId, int friendsId){
+        String sqlQuery = " SELECT films.* " +
+                "FROM films " +
+                "WHERE films.id IN (SELECT DISTINCT id_film FROM likes WHERE id_user = ? AND ?)";
+        return jdbcTemplate.query(sqlQuery, this::mapRowToFilms, userId, friendsId);
+    }
+
+
+    @Override
     public List<Film> getSortedFilmByDirector(Integer directorId, String sortBy) {
         String sql = "SELECT * FROM DIRECTORS WHERE ID = ?";
         SqlRowSet directorRows = jdbcTemplate.queryForRowSet(sql, directorId);

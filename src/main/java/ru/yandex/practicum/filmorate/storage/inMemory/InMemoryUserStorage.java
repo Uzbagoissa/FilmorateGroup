@@ -36,7 +36,6 @@ public class InMemoryUserStorage implements UserStorage {
     @Override
     public void removeUser(User user) {
         validUser(user);
-
         if(user.getFriends() != null){
             List<Integer> setFriends = new ArrayList<>(user.getFriends());
             //удалить из списка друзей удаляемого пользователя

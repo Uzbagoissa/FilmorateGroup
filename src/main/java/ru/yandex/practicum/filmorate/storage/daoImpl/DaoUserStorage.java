@@ -77,7 +77,7 @@ public class DaoUserStorage implements UserStorage {
     }
 
     @Override
-    public void removeUser(User user) {
+    public void removeUser (User user) {
 
         // удаляем друзей пользователя
         String sqlQueryFriends = "DELETE FROM users " +
