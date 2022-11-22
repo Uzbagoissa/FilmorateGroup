@@ -3,8 +3,6 @@ package ru.yandex.practicum.filmorate.services;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
-import ru.yandex.practicum.filmorate.exceptions.ValidationFilmByIdException;
-import ru.yandex.practicum.filmorate.exceptions.ValidationUserByIdException;
 import ru.yandex.practicum.filmorate.models.Film;
 
 import lombok.extern.slf4j.Slf4j;
