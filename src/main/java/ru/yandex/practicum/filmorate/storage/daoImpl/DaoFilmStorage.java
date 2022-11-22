@@ -1,5 +1,6 @@
 package ru.yandex.practicum.filmorate.storage.daoImpl;
 
+import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -16,6 +17,8 @@ import ru.yandex.practicum.filmorate.storage.interf.FilmStorage;
 
 import java.sql.*;
 import java.util.ArrayList;
+import java.time.LocalDate;
+import java.time.Year;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
@@ -149,14 +152,54 @@ public class DaoFilmStorage implements FilmStorage {
     }
 
     @Override
-    public List<Film> getMostPopularFilmByCountLikes(Integer cnt) {
-        String sqlQuery = "SELECT films.* " +
-                "FROM films " +
-                "LEFT JOIN likes ON likes.id_film = films.id " +
-                "GROUP BY films.id " +
-                "ORDER BY COUNT(likes.id_user) DESC " +
-                "LIMIT ?";
-        return jdbcTemplate.query(sqlQuery, this::mapRowToFilms, cnt);
+    public List<Film> getMostPopularFilmByCountLikes(Integer cnt, Integer genreId, Year year) {
+        if(genreId == null && year == null){
+            //запрос популярных фильмов по лайкам все годов и жанров
+            String sqlQuery = "SELECT films.* " +
+                    "FROM films " +
+                    "LEFT JOIN likes ON likes.id_film = films.id " +
+                    "GROUP BY films.id " +
+                    "ORDER BY COUNT(likes.id_user) DESC " +
+                    "LIMIT ?;";
+            return jdbcTemplate.query(sqlQuery, this::mapRowToFilms, cnt);
+
+        } else if(genreId != null && year != null){
+            //запрос популярных фильмов по лайкам конкретного года и жанра
+            String sqlQuery = "SELECT films.* " +
+                    "FROM films " +
+                    "LEFT JOIN likes ON likes.id_film = films.id " +
+                    "LEFT JOIN film_genres ON film_genres.id_film = films.id " +
+                    "WHERE EXTRACT (YEAR FROM films.release_date ) = ? " +
+                    "AND film_genres.id_genre = ? " +
+                    "GROUP BY films.id " +
+                    "ORDER BY COUNT(likes.id_user) DESC " +
+                    "LIMIT ?;";
+            return jdbcTemplate.query(sqlQuery, this::mapRowToFilms, String.valueOf(year), genreId, cnt);
+
+        } else if (genreId == null){
+            //запрос популярных фильмов по лайкам конкретного года
+            String sqlQuery = "SELECT films.* " +
+                    "FROM films " +
+                    "LEFT JOIN likes ON likes.id_film = films.id " +
+                    "WHERE EXTRACT (YEAR FROM films.release_date ) = ? " +
+                    "GROUP BY films.id " +
+                    "ORDER BY COUNT(likes.id_user) DESC " +
+                    "LIMIT ?;";
+            return jdbcTemplate.query(sqlQuery,this::mapRowToFilms, String.valueOf(year), cnt);
+
+        } else {
+            //запрос популярных фильмов по лайкам конкретного жанра
+            String sqlQuery = "SELECT films.* " +
+                    "FROM films " +
+                    "LEFT JOIN likes ON likes.id_film = films.id " +
+                    "LEFT JOIN film_genres ON film_genres.id_film = films.id " +
+                    "WHERE film_genres.id_genre = ? " +
+                    "GROUP BY films.id " +
+                    "ORDER BY COUNT(likes.id_user) DESC " +
+                    "LIMIT ?;";
+            return jdbcTemplate.query(sqlQuery,this::mapRowToFilms, genreId, cnt);
+
+        }
     }
 
     @Override
@@ -202,7 +245,6 @@ public class DaoFilmStorage implements FilmStorage {
                 .directors(directorService.getDirectorsByIdFilm(resultSet.getInt("id")))
                 .build();
     }
-
     private List<Integer> getLikesFromUserByFilmId(int id) {
         String sqlQuery = "SELECT id " +
                 "FROM users " +
@@ -222,9 +264,9 @@ public class DaoFilmStorage implements FilmStorage {
     }
 
     private void checkMpaIsNull(PreparedStatement ps, Film film) throws SQLException {
-        if (film.getMpa() != null) {
+        if(film.getMpa() != null){
             ps.setInt(6, film.getMpa().getId());
-        } else if (film.getMpa() == null) {
+        } else if (film.getMpa() == null)  {
             throw new DataIntegrityViolationException("MPA не может быть null");
         } else if (film.getMpa().getId() < 1 || film.getMpa().getId() > 5) {
             throw new ValidationException("Данного рейтинга еще не существует");
