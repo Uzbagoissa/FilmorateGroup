@@ -6,14 +6,17 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
+import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Component;
-import ru.yandex.practicum.filmorate.exceptions.ValidationException;
+import ru.yandex.practicum.filmorate.exceptions.*;
 import ru.yandex.practicum.filmorate.models.Film;
+import ru.yandex.practicum.filmorate.services.DirectorService;
 import ru.yandex.practicum.filmorate.services.GenreService;
 import ru.yandex.practicum.filmorate.services.MpaService;
 import ru.yandex.practicum.filmorate.storage.interf.FilmStorage;
 
 import java.sql.*;
+import java.util.ArrayList;
 import java.time.LocalDate;
 import java.time.Year;
 import java.util.HashSet;
@@ -27,11 +30,13 @@ public class DaoFilmStorage implements FilmStorage {
     private final JdbcTemplate jdbcTemplate;
     private final MpaService mpaService;
     private final GenreService genreService;
+    private final DirectorService directorService;
 
     public DaoFilmStorage(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
         this.mpaService = new MpaService(new DaoMpaStorage(jdbcTemplate));
         this.genreService = new GenreService(new DaoGenreStorage(jdbcTemplate));
+        this.directorService = new DirectorService(new DaoDirectorStorage(jdbcTemplate));
     }
 
     @Override
@@ -76,6 +81,7 @@ public class DaoFilmStorage implements FilmStorage {
         film.setId(id);
 
         genreService.addOrUpdateFilmGenres(film);
+        directorService.addOrUpdateFilmDirectors(film);
 
         return getFilmById(id);
     }
@@ -97,6 +103,7 @@ public class DaoFilmStorage implements FilmStorage {
                 , film.getId());
 
         genreService.addOrUpdateFilmGenres(film);
+        directorService.addOrUpdateFilmDirectors(film);
 
         return getFilmById(film.getId());
     }
@@ -110,6 +117,13 @@ public class DaoFilmStorage implements FilmStorage {
                 "WHERE id_film = ? ";
 
         jdbcTemplate.update(sqlQueryGenre, film.getId());
+
+        //удаляем режиссеров в связанной таблице film_directors
+        String sqlQueryDirector = "DELETE " +
+                "FROM FILM_DIRECTORS " +
+                "WHERE ID_FILM = ? ";
+
+        jdbcTemplate.update(sqlQueryDirector, film.getId());
 
         String sqlQuery = "DELETE " +
                 "FROM films " +
@@ -188,6 +202,35 @@ public class DaoFilmStorage implements FilmStorage {
         }
     }
 
+    @Override
+    public List<Film> getSortedFilmByDirector(Integer directorId, String sortBy) {
+        String sql = "SELECT * FROM DIRECTORS WHERE ID = ?";
+        SqlRowSet directorRows = jdbcTemplate.queryForRowSet(sql, directorId);
+        if (!directorRows.next()) {
+            log.error("Такого режиссера не существует!");
+            throw new ValidationException("Такого режиссера не существует!");
+        }
+        List<Film> films = new ArrayList<>();
+        if (sortBy.equals("likes")) {
+            String sqlQuery = "SELECT FILMS.* " +
+                    "FROM FILMS " +
+                    "LEFT JOIN LIKES ON LIKES.ID_FILM = FILMS.ID " +
+                    "LEFT JOIN FILM_DIRECTORS ON FILM_DIRECTORS.ID_FILM = films.ID " +
+                    "WHERE ID_DIRECTOR = ? " +
+                    "GROUP BY films.id " +
+                    "ORDER BY COUNT(likes.id_user) DESC ";
+            films = jdbcTemplate.query(sqlQuery, this::mapRowToFilms, directorId);
+        } else if (sortBy.equals("year")) {
+            String sqlQuery = "SELECT FILMS.* " +
+                    "FROM FILMS " +
+                    "LEFT JOIN FILM_DIRECTORS ON FILM_DIRECTORS.ID_FILM = films.ID " +
+                    "WHERE ID_DIRECTOR = ? " +
+                    "ORDER BY FILMS.RELEASE_DATE ";
+            films = jdbcTemplate.query(sqlQuery, this::mapRowToFilms, directorId);
+        }
+        return films;
+    }
+
     private Film mapRowToFilms(ResultSet resultSet, int i) throws SQLException {
         return Film.builder()
                 .id(resultSet.getInt("id"))
@@ -199,6 +242,7 @@ public class DaoFilmStorage implements FilmStorage {
                 .rate(resultSet.getInt("rate"))
                 .mpa(mpaService.getMpaById(Integer.valueOf(resultSet.getString("mpa"))))
                 .genres(genreService.getGenresByIdFilm(resultSet.getInt("id")))
+                .directors(directorService.getDirectorsByIdFilm(resultSet.getInt("id")))
                 .build();
     }
     private List<Integer> getLikesFromUserByFilmId(int id) {

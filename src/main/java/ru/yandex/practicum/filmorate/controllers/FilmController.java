@@ -80,4 +80,11 @@ public class FilmController {
 
         return filmService.getMostPopularFilmByCountLikes(count, genreId, year);
     }
+
+    @GetMapping("/director/{directorId}")
+    public List<Film> getSortedFilmByDirector(
+            @PathVariable("directorId") Integer directorId,
+            @RequestParam(value = "sortBy") String sortBy) {
+        return filmService.getSortedFilmByDirector(directorId, sortBy);
+    }
 }

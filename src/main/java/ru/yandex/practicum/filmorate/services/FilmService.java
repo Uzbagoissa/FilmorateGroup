@@ -61,4 +61,8 @@ public class FilmService {
     public UserService getUserService() {
         return userService;
     }
+    public List<Film> getSortedFilmByDirector(Integer directorId, String sortBy) {
+        return filmStorage.getSortedFilmByDirector(directorId, sortBy);
+    }
+
 }
