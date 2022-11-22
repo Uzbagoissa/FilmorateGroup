@@ -123,7 +123,7 @@ public class DaoFilmStorage implements FilmStorage {
                 "FROM FILM_DIRECTORS " +
                 "WHERE ID_FILM = ? ";
 
-        jdbcTemplate.update(sqlQueryDirector, film.getId());
+        jdbcTemplate.update(sqlQueryDirector, id);
 
         String sqlQuery = "DELETE " +
                 "FROM films " +
