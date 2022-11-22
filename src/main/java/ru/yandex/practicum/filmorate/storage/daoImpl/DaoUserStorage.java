@@ -134,7 +134,7 @@ public class DaoUserStorage implements UserStorage {
                 "WHERE id_user_one = ? AND id_user_two = ?";
 
         jdbcTemplate.update(sqlQuery, userId, friendId);
-        log.info("У пользоателя с id: {} удален друг с id: {} ", userId, friendId);
+        log.info("У пользователя с id: {} удален друг с id: {} ", userId, friendId);
         return getUserById(userId);
     }
 

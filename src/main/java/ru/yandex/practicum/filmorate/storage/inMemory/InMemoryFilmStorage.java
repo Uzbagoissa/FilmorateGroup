@@ -9,6 +9,7 @@ import ru.yandex.practicum.filmorate.models.Film;
 import ru.yandex.practicum.filmorate.storage.interf.FilmStorage;
 
 import java.time.LocalDate;
+import java.time.Year;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -47,6 +48,7 @@ public class InMemoryFilmStorage implements FilmStorage {
     public void removeFilm(Film film) {
         validFilmById(film.getId());
         films.remove(film.getId());
+
         log.info("Из библиотеки удален фильм {}", film);
     }
 
@@ -97,6 +99,12 @@ public class InMemoryFilmStorage implements FilmStorage {
                 .limit(count)
                 .collect(Collectors.toList());
     }
+
+    @Override
+    public List<Film> getSortedFilmByDirector(Integer id, String sortBy) {
+        return null;
+    }
+
 
     @Override
     public List<Film> findCommon (int userId, int friendId){
