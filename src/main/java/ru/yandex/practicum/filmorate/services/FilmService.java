@@ -9,6 +9,8 @@ import lombok.extern.slf4j.Slf4j;
 import ru.yandex.practicum.filmorate.models.User;
 import ru.yandex.practicum.filmorate.storage.interf.FilmStorage;
 
+import java.time.LocalDate;
+import java.time.Year;
 import java.util.*;
 
 
@@ -53,11 +55,10 @@ public class FilmService {
 
         return filmStorage.removeLikeFromUserById(film.getId(), user.getId());
     }
-    public List<Film> getMostPopularFilmByCountLikes(Integer count){
-        return filmStorage.getMostPopularFilmByCountLikes(count);
+    public List<Film> getMostPopularFilmByCountLikes(Integer count, Integer genreId, Year year){
+        return filmStorage.getMostPopularFilmByCountLikes(count, genreId, year);
     }
     public UserService getUserService() {
         return userService;
     }
-
 }
