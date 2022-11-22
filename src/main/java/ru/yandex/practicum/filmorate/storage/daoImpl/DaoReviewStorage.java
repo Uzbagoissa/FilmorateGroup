@@ -62,7 +62,7 @@ public class DaoReviewStorage implements ReviewStorage<Review> {
             throw new EmptyResultFromDataBaseException("Фильм с идентификатором " + review.getFilmId() + " отсутствует");
         }
         if (!checkUserExists(review.getUserId())) {
-            throw new EmptyResultFromDataBaseException("Пользователь с идентификатором " + review.getFilmId() + " отсутствует");
+            throw new EmptyResultFromDataBaseException("Пользователь с идентификатором " + review.getUserId() + " отсутствует");
         }
         createOrUpdate(
                 Constants.CREATE_REVIEW,
