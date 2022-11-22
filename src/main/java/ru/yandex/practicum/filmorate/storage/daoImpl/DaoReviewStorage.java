@@ -58,12 +58,6 @@ public class DaoReviewStorage implements ReviewStorage<Review> {
 
     @Override
     public Review create(Review review) {
-        if (!checkFilmExists(review.getFilmId())) {
-            throw new EmptyResultFromDataBaseException("Фильм с идентификатором " + review.getFilmId() + " отсутствует");
-        }
-        if (!checkUserExists(review.getUserId())) {
-            throw new EmptyResultFromDataBaseException("Пользователь с идентификатором " + review.getUserId() + " отсутствует");
-        }
         createOrUpdate(
                 Constants.CREATE_REVIEW,
                 new Object[]{
@@ -86,12 +80,6 @@ public class DaoReviewStorage implements ReviewStorage<Review> {
 
     @Override
     public Review update(Review review) {
-        if (!checkFilmExists(review.getFilmId())) {
-            throw new EmptyResultFromDataBaseException("Фильм с идентификатором " + review.getFilmId() + " отсутствует");
-        }
-        if (!checkUserExists(review.getUserId())) {
-            throw new EmptyResultFromDataBaseException("Пользователь с идентификатором " + review.getUserId() + " отсутствует");
-        }
         createOrUpdate(
                 Constants.UPDATE_REVIEW,
                 new Object[]{
@@ -126,13 +114,6 @@ public class DaoReviewStorage implements ReviewStorage<Review> {
 
     @Override
     public void addLikeToReview(Integer reviewId, Integer userId) {
-        if (!checkUserExists(userId)) {
-            throw new EmptyResultFromDataBaseException("Пользователь с идентификатором " + userId + " отсутствует");
-        }
-        if (!checkReviewExists(reviewId)) {
-            throw new EmptyResultFromDataBaseException("Отзыв с идентификатором " + reviewId + " отсутствует");
-        }
-
         jdbcTemplate.update(
                 Constants.INSERT_LIKE_TO_REVIEW,
                 reviewId,
@@ -153,13 +134,6 @@ public class DaoReviewStorage implements ReviewStorage<Review> {
 
     @Override
     public void addDisLikeToReview(Integer reviewId, Integer userId) {
-        if (!checkUserExists(userId)) {
-            throw new EmptyResultFromDataBaseException("Пользователь с идентификатором " + userId + " отсутствует");
-        }
-        if (!checkReviewExists(reviewId)) {
-            throw new EmptyResultFromDataBaseException("Отзыв с идентификатором " + reviewId + " отсутствует");
-        }
-
         jdbcTemplate.update(
                 Constants.INSERT_DISLIKE_TO_REVIEW,
                 reviewId,
@@ -180,16 +154,14 @@ public class DaoReviewStorage implements ReviewStorage<Review> {
 
     @Override
     public void delete(Long reviewId) {
-        if (!checkReviewExists(Math.toIntExact(reviewId))) {
-            throw new EmptyResultFromDataBaseException("Отзыв с идентификатором " + reviewId + " отсутствует");
-        }
         jdbcTemplate.update(
                 "DELETE FROM reviews WHERE review_id = ?",
                 reviewId
         );
     }
 
-    private Boolean checkReviewExists(Integer reviewId) {
+    @Override
+    public Boolean checkReviewExists(Integer reviewId) {
         Integer reviewCount = jdbcTemplate.queryForObject(
                 Constants.GET_REVIEW_COUNT_ID,
                 Integer.class,
@@ -198,7 +170,8 @@ public class DaoReviewStorage implements ReviewStorage<Review> {
         return reviewCount != null && reviewCount > 0;
     }
 
-    private Boolean checkFilmExists(Integer filmId) {
+    @Override
+    public Boolean checkFilmExists(Integer filmId) {
         Integer filmsCount = jdbcTemplate.queryForObject(
                 Constants.GET_FILM_BY_ID,
                 Integer.class,
@@ -208,7 +181,8 @@ public class DaoReviewStorage implements ReviewStorage<Review> {
         return filmsCount != null && filmsCount > 0;
     }
 
-    private Boolean checkUserExists(Integer userId) {
+    @Override
+    public Boolean checkUserExists(Integer userId) {
         Integer usersCount = jdbcTemplate.queryForObject(
                 Constants.GET_USER_BY_ID,
                 Integer.class,

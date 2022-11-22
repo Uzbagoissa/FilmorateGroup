@@ -1,6 +1,7 @@
 package ru.yandex.practicum.filmorate.storage.daoImpl;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.annotation.Primary;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
@@ -15,6 +16,7 @@ import java.util.*;
 
 @Component
 @Slf4j
+@Primary
 public class DaoUserStorage implements UserStorage {
     private final JdbcTemplate jdbcTemplate;
 
@@ -99,8 +101,6 @@ public class DaoUserStorage implements UserStorage {
 
     @Override
     public User addFriend(Integer userId, Integer friendId) {
-        getUserById(userId);
-        getUserById(friendId);
 
         String sqlQueryInsertFriend = "MERGE INTO users_friends(id_user_one, id_user_two)" +
                 "VALUES (?, ?)";
