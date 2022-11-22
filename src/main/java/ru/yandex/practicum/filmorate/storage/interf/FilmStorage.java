@@ -8,7 +8,7 @@ import java.util.List;
 public interface FilmStorage {
 
     Film addFilm(Film film);
-    void removeFilm(int id);
+    void removeFilm(Film film);
     Film updateFilm(Film film);
     List<Film> getFilms();
     Film getFilmById(Integer filmId);
@@ -16,6 +16,8 @@ public interface FilmStorage {
     Film addLikeFromUserById(Integer filmId, Integer userId);
 
     Film removeLikeFromUserById(Integer filmId, Integer userId);
+
+    List<Film> findCommon(int userId, int friendsId);
 
     List<Film> getMostPopularFilmByCountLikes(Integer count, Integer genreId, Year year);
 

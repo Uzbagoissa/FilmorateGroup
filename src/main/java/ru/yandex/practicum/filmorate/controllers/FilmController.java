@@ -45,9 +45,9 @@ public class FilmController {
         return filmService.updateFilm(film);
     }
 
-    @DeleteMapping("/{id}")
-    public void removeFilm(@PathVariable("id") int id) {
-        filmService.removeFilm(id);
+    @DeleteMapping
+    public void removeFilm(@RequestBody Film film) {
+        filmService.removeFilm(film);
     }
 
 
@@ -86,5 +86,11 @@ public class FilmController {
             @PathVariable("directorId") Integer directorId,
             @RequestParam(value = "sortBy") String sortBy) {
         return filmService.getSortedFilmByDirector(directorId, sortBy);
+    }
+
+    @GetMapping("/common")
+    public List<Film> getCommonFilms(@RequestParam(value = "userId") int userId, @RequestParam(value = "friendId")
+        int friendId){
+        return filmService.findCommon(userId, friendId);
     }
 }

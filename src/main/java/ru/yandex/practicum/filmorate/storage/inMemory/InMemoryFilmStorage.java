@@ -45,11 +45,11 @@ public class InMemoryFilmStorage implements FilmStorage {
     }
 
     @Override
-    public void removeFilm(int id) {
-        validFilmById(id);
-        films.remove(id);
+    public void removeFilm(Film film) {
+        validFilmById(film.getId());
+        films.remove(film.getId());
 
-        log.info("Из библиотеки удален фильм {}", id);
+        log.info("Из библиотеки удален фильм {}", film);
     }
 
     @Override
@@ -102,6 +102,12 @@ public class InMemoryFilmStorage implements FilmStorage {
 
     @Override
     public List<Film> getSortedFilmByDirector(Integer id, String sortBy) {
+        return null;
+    }
+
+
+    @Override
+    public List<Film> findCommon (int userId, int friendId){
         return null;
     }
 

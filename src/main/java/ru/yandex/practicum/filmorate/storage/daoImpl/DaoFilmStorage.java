@@ -109,14 +109,14 @@ public class DaoFilmStorage implements FilmStorage {
     }
 
     @Override
-    public void removeFilm(int id) {
+    public void removeFilm(Film film) {
 
         //удаляем жанры в связанной таблице film_genres
         String sqlQueryGenre = "DELETE " +
                 "FROM film_genres " +
                 "WHERE id_film = ? ";
 
-        jdbcTemplate.update(sqlQueryGenre, id);
+        jdbcTemplate.update(sqlQueryGenre, film.getId());
 
         //удаляем режиссеров в связанной таблице film_directors
         String sqlQueryDirector = "DELETE " +
@@ -129,7 +129,7 @@ public class DaoFilmStorage implements FilmStorage {
                 "FROM films " +
                 "WHERE id = ?";
 
-        jdbcTemplate.update(sqlQuery, id);
+        jdbcTemplate.update(sqlQuery, film.getId());
     }
 
     @Override
@@ -201,6 +201,15 @@ public class DaoFilmStorage implements FilmStorage {
 
         }
     }
+
+    @Override
+    public List<Film> findCommon(int userId, int friendsId){
+        String sqlQuery = " SELECT films.* " +
+                "FROM films " +
+                "WHERE films.id IN (SELECT DISTINCT id_film FROM likes WHERE id_user = ? AND ?)";
+        return jdbcTemplate.query(sqlQuery, this::mapRowToFilms, userId, friendsId);
+    }
+
 
     @Override
     public List<Film> getSortedFilmByDirector(Integer directorId, String sortBy) {

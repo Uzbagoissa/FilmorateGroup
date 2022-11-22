@@ -20,6 +20,7 @@ public class FilmService {
     private final UserService userService;
     private final FilmStorage filmStorage;
 
+
     @Autowired
     public FilmService(UserService userService, @Qualifier("daoFilmStorage") FilmStorage filmStorage){
         this.userService = userService;
@@ -40,8 +41,8 @@ public class FilmService {
     public Film updateFilm(Film film){
         return filmStorage.updateFilm(film);
     }
-    public void removeFilm(int id){
-        filmStorage.removeFilm(id);
+    public void removeFilm(Film film){
+        filmStorage.removeFilm(film);
     }
     public Film addLikeFromUserById(Integer filmId, Integer userId){
         Film film = filmStorage.getFilmById(filmId);
@@ -63,6 +64,13 @@ public class FilmService {
     }
     public List<Film> getSortedFilmByDirector(Integer directorId, String sortBy) {
         return filmStorage.getSortedFilmByDirector(directorId, sortBy);
+    }
+
+    public List<Film> findCommon (int userId, int friendId){
+        List<Film> common = filmStorage.findCommon(userId, friendId);
+        common.sort((o1, o2) -> o2.getLikes().size() - o1.getLikes().size());
+
+                return common;
     }
 
 }

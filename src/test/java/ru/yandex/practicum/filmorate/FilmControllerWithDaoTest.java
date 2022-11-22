@@ -182,7 +182,7 @@ public class FilmControllerWithDaoTest {
                 .build();
         filmStorage.addFilm(firstFilm);
         firstFilm.setId(1);
-        filmStorage.removeFilm(1);
+        filmStorage.removeFilm(firstFilm);
         assertEquals(new ArrayList<>(0), filmStorage.getFilms());
     }
 
@@ -585,7 +585,7 @@ public class FilmControllerWithDaoTest {
                 , "Вернулся неверный список фильмов");
     }
 
-    @Test
+   @Test
     public void getSortedFilmByDirectorTest() {
         Director director = Director.builder()
                 .id(1)
