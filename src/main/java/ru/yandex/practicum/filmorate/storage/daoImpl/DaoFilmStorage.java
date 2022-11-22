@@ -81,6 +81,7 @@ public class DaoFilmStorage implements FilmStorage {
         film.setId(id);
 
         genreService.addOrUpdateFilmGenres(film);
+        directorService.addOrUpdateFilmDirectors(film);
 
         return getFilmById(id);
     }
@@ -102,6 +103,7 @@ public class DaoFilmStorage implements FilmStorage {
                 , film.getId());
 
         genreService.addOrUpdateFilmGenres(film);
+        directorService.addOrUpdateFilmDirectors(film);
 
         return getFilmById(film.getId());
     }
@@ -249,6 +251,7 @@ public class DaoFilmStorage implements FilmStorage {
                 .rate(resultSet.getInt("rate"))
                 .mpa(mpaService.getMpaById(Integer.valueOf(resultSet.getString("mpa"))))
                 .genres(genreService.getGenresByIdFilm(resultSet.getInt("id")))
+                .directors(directorService.getDirectorsByIdFilm(resultSet.getInt("id")))
                 .build();
     }
     private List<Integer> getLikesFromUserByFilmId(int id) {
