@@ -1,6 +1,7 @@
 package ru.yandex.practicum.filmorate.storage.daoImpl;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.annotation.Primary;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
@@ -21,6 +22,7 @@ import java.util.*;
 
 @Component
 @Slf4j
+@Primary
 public class DaoFilmStorage implements FilmStorage {
 
     private final JdbcTemplate jdbcTemplate;

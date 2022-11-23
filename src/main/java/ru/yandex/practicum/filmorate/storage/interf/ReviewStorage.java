@@ -20,4 +20,10 @@ public interface ReviewStorage<T extends Review> {
     void addLikeToReview(Integer reviewId, Integer userId);
     void addDisLikeToReview(Integer reviewId, Integer userId);
     void delete(Long reviewId);
+
+    Boolean checkFilmExists(Integer filmId);
+
+    Boolean checkUserExists(Integer userId);
+
+    Boolean checkReviewExists(Integer reviewId);
 }
