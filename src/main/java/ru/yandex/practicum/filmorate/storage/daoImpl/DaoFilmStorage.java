@@ -5,17 +5,19 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
+import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.exceptions.ValidationException;
 import ru.yandex.practicum.filmorate.models.Film;
+import ru.yandex.practicum.filmorate.services.DirectorService;
 import ru.yandex.practicum.filmorate.services.GenreService;
 import ru.yandex.practicum.filmorate.services.MpaService;
 import ru.yandex.practicum.filmorate.storage.interf.FilmStorage;
 
 import java.sql.*;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Objects;
+import java.sql.Date;
+import java.time.Year;
+import java.util.*;
 
 @Component
 @Slf4j
@@ -248,7 +250,7 @@ public class DaoFilmStorage implements FilmStorage {
                 .directors(directorService.getDirectorsByIdFilm(resultSet.getInt("id")))
                 .build();
     }
-    private List<Integer> getLikesFromUserByFilmId(int id) {
+    public List<Integer> getLikesFromUserByFilmId(int id) {
         String sqlQuery = "SELECT id " +
                 "FROM users " +
                 "WHERE id IN" +
@@ -298,7 +300,7 @@ public class DaoFilmStorage implements FilmStorage {
                     "LEFT OUTER JOIN film_directors AS fd ON f.id = fd.id_film " +
                     "LEFT OUTER JOIN directors AS d ON fd.id_director = d.id " +
                     "LEFT JOIN likes AS l ON f.id = l.id_film " +
-                    "WHERE " + getInsertString(substring, by) +
+                    "WHERE " + getInsertString(substring, by) + " " +
                     "GROUP BY f.id " +
                     "ORDER BY COUNT(l.id_user) DESC;";
         return jdbcTemplate.query(sql, this::mapRowToFilms);
