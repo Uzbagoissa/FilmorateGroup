@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.models.Event;
+import ru.yandex.practicum.filmorate.models.Film;
 import ru.yandex.practicum.filmorate.models.User;
 import ru.yandex.practicum.filmorate.storage.interf.EventStorage;
 import ru.yandex.practicum.filmorate.storage.interf.UserStorage;
@@ -46,8 +47,8 @@ public class UserService {
         return listUser;
     }
 
-    public void removeUser(User user){
-        userStorage.removeUser(user);
+    public void removeUser(Integer id) {
+        userStorage.removeUser(id);
     }
 
 
@@ -89,5 +90,10 @@ public class UserService {
 
     public List<Event> getFeedByUserId(Integer id) {
         return eventStorage.getOneById((long) id);
+    }
+
+    public List<Film> getRecommendations(Integer id) {
+        log.info("Запрос рекомендаций для пользователя с id = " + id);
+        return userStorage.getRecommendations(id);
     }
 }

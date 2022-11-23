@@ -174,11 +174,11 @@ class FilmControllerInMemoryTest {
 
         filmController.getFilmService().addLikeFromUserById(1,1);
 
-        assertEquals(filmController.getMostPopularFilmByCountLikes(1).size(), 1);
-        assertEquals(filmController.getMostPopularFilmByCountLikes(10).size(), 3);
-        assertEquals(filmController.getMostPopularFilmByCountLikes(10).size(), 3);
+        assertEquals(filmController.getMostPopularFilmByCountLikes(1, null, null).size(), 1);
+        assertEquals(filmController.getMostPopularFilmByCountLikes(10, null, null).size(), 3);
+        assertEquals(filmController.getMostPopularFilmByCountLikes(10, null, null).size(), 3);
 
-        assertEquals(Collections.singletonList(secondFilm), filmController.getMostPopularFilmByCountLikes(1), "Вернулся неверный списко фильмов");
+        assertEquals(Collections.singletonList(secondFilm), filmController.getMostPopularFilmByCountLikes(1, null, null), "Вернулся неверный списко фильмов");
 
 
     }

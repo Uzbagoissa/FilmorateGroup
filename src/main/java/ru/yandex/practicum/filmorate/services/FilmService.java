@@ -11,6 +11,8 @@ import ru.yandex.practicum.filmorate.models.User;
 import ru.yandex.practicum.filmorate.storage.interf.EventStorage;
 import ru.yandex.practicum.filmorate.storage.interf.FilmStorage;
 
+import java.time.LocalDate;
+import java.time.Year;
 import java.util.*;
 
 
@@ -38,8 +40,8 @@ public class FilmService {
     public Film updateFilm(Film film){
         return filmStorage.updateFilm(film);
     }
-    public void removeFilm(Film film){
-        filmStorage.removeFilm(film);
+    public void removeFilm(Integer id){
+        filmStorage.removeFilm(id);
     }
     public Film addLikeFromUserById(Integer filmId, Integer userId){
         Film film = filmStorage.getFilmById(filmId);
@@ -69,11 +71,24 @@ public class FilmService {
 
         return filmStorage.removeLikeFromUserById(film.getId(), user.getId());
     }
-    public List<Film> getMostPopularFilmByCountLikes(Integer count){
-        return filmStorage.getMostPopularFilmByCountLikes(count);
+    public List<Film> getMostPopularFilmByCountLikes(Integer count, Integer genreId, Year year){
+        return filmStorage.getMostPopularFilmByCountLikes(count, genreId, year);
     }
     public UserService getUserService() {
         return userService;
     }
+    public List<Film> getSortedFilmByDirector(Integer directorId, String sortBy) {
+        return filmStorage.getSortedFilmByDirector(directorId, sortBy);
+    }
 
+    public List<Film> findCommon (int userId, int friendId){
+        List<Film> common = filmStorage.findCommon(userId, friendId);
+        common.sort((o1, o2) -> o2.getLikes().size() - o1.getLikes().size());
+
+                return common;
+    }
+
+    public List<Film> searchFilm(String substring, String by) throws IllegalArgumentException {
+        return filmStorage.searchFilms(substring, by);
+    }
 }
