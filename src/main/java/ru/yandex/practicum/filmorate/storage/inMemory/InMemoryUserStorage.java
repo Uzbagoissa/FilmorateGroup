@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.exceptions.ValidationException;
 import ru.yandex.practicum.filmorate.exceptions.ValidationUserByIdException;
+import ru.yandex.practicum.filmorate.models.Film;
 import ru.yandex.practicum.filmorate.models.User;
 import ru.yandex.practicum.filmorate.storage.interf.UserStorage;
 
@@ -126,6 +127,11 @@ public class InMemoryUserStorage implements UserStorage {
 
         log.info("Пользователи с id: {} и {} больше не друзья", user.getId(), friend.getId());
         return user;
+    }
+
+    @Override
+    public List<Film> getRecommendations(Integer id) {
+        return null;
     }
 
     private void conditionPOSTAndPutUserWithoutValid(User user) {
