@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
+import ru.yandex.practicum.filmorate.models.Film;
 import ru.yandex.practicum.filmorate.models.User;
 import ru.yandex.practicum.filmorate.storage.interf.UserStorage;
 
@@ -44,8 +45,8 @@ public class UserService {
         return listUser;
     }
 
-    public void removeUser(User user){
-        userStorage.removeUser(user);
+    public void removeUser(Integer id) {
+        userStorage.removeUser(id);
     }
 
 
@@ -67,4 +68,11 @@ public class UserService {
         log.info("Возвращены общие друзья {} пользователей c id: {} и {}",setFriends.toString(), userId, otherId);
         return setFriends;
     }
+
+    public List<Film> getRecommendations(Integer id) {
+        log.info("Запрос рекомендаций для пользователя с id = " + id);
+        return userStorage.getRecommendations(id);
+    }
+
+
 }
