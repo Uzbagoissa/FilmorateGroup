@@ -16,12 +16,10 @@ import ru.yandex.practicum.filmorate.services.MpaService;
 import ru.yandex.practicum.filmorate.storage.interf.FilmStorage;
 
 import java.sql.*;
-import java.util.ArrayList;
+import java.sql.Date;
+import java.util.*;
 import java.time.LocalDate;
 import java.time.Year;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Objects;
 
 @Component
 @Slf4j
@@ -280,5 +278,33 @@ public class DaoFilmStorage implements FilmStorage {
         } else if (film.getMpa().getId() < 1 || film.getMpa().getId() > 5) {
             throw new ValidationException("Данного рейтинга еще не существует");
         }
+    }
+
+    private String getInsertString(String substring, String by) throws IllegalArgumentException {
+        substring = substring.toLowerCase(Locale.ROOT);
+        switch (by) {
+            case "director":
+                return "(LOWER(d.name) LIKE '%" + substring + "%')";
+            case "title":
+                return "(LOWER(f.name) LIKE '%" + substring + "%')";
+            case "director,title":
+            case "title,director":
+                return "(LOWER(d.name) LIKE '%" + substring + "%') OR (LOWER(f.name) LIKE '%" + substring + "%')";
+            default:
+                throw new IllegalArgumentException("Wrong request param.");
+        }
+    }
+
+    @Override
+    public List<Film> searchFilms(String substring, String by) throws IllegalArgumentException {
+        String sql = "SELECT *" +
+                    "FROM films AS f " +
+                    "LEFT OUTER JOIN film_directors AS fd ON f.id = fd.id_film " +
+                    "LEFT OUTER JOIN directors AS d ON fd.id_director = d.id " +
+                    "LEFT JOIN likes AS l ON f.id = l.id_film " +
+                    "WHERE " + getInsertString(substring, by) +
+                    "GROUP BY f.id " +
+                    "ORDER BY COUNT(l.id_user) DESC;";
+        return jdbcTemplate.query(sql, this::mapRowToFilms);
     }
 }

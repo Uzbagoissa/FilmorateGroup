@@ -22,4 +22,6 @@ public interface FilmStorage {
     List<Film> getMostPopularFilmByCountLikes(Integer count, Integer genreId, Year year);
 
     List<Film> getSortedFilmByDirector(Integer id, String sortBy);
+
+    public List<Film> searchFilms(String substring, String by) throws IllegalArgumentException;
 }
