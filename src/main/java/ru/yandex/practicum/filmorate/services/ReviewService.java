@@ -57,14 +57,18 @@ public class ReviewService {
         if (!reviewStorage.checkUserExists(review.getUserId())) {
             throw new EmptyResultFromDataBaseException("Пользователь с идентификатором " + review.getUserId() + " отсутствует");
         }
+
+        Review updatedReview = reviewStorage.update(review);
+
         Map<String, Object> params = eventStorage.makeEvent(
-                1L,
-                1,
+                (long)updatedReview.getUserId(),
+                Math.toIntExact(updatedReview.getReviewId()),
                 "review",
                 "update"
         );
         eventStorage.save(params);
-        return reviewStorage.update(review);
+        
+        return updatedReview;
     }
 
     public Review getByReviewId(Long reviewId) {
