@@ -77,24 +77,13 @@ public class DaoUserStorage implements UserStorage {
     }
 
     @Override
-    public void removeUser (User user) {
-
-        // удаляем друзей пользователя
-        String sqlQueryFriends = "DELETE FROM users " +
-                "WHERE id IN" +
-                "( " +
-                "SELECT id_user_two " +
-                "FROM users_friends WHERE id_user_one = ?" +
-                ")";
-
-        jdbcTemplate.update(sqlQueryFriends, user.getId());
-
+    public void removeUser (Integer id) {
         String sqlQuery = "DELETE " +
                 "FROM users " +
                 "WHERE id = ?";
 
-        log.info("Удален пользователь под id: {}", user.getId());
-        jdbcTemplate.update(sqlQuery, user.getId());
+        log.info("Удален пользователь под id: {}", id);
+        jdbcTemplate.update(sqlQuery, id);
     }
 
     @Override

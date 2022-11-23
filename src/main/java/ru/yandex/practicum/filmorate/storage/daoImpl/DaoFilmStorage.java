@@ -107,27 +107,27 @@ public class DaoFilmStorage implements FilmStorage {
     }
 
     @Override
-    public void removeFilm(Film film) {
+    public void removeFilm(Integer id) {
 
         //удаляем жанры в связанной таблице film_genres
         String sqlQueryGenre = "DELETE " +
                 "FROM film_genres " +
                 "WHERE id_film = ? ";
 
-        jdbcTemplate.update(sqlQueryGenre, film.getId());
+        jdbcTemplate.update(sqlQueryGenre, id);
 
         //удаляем режиссеров в связанной таблице film_directors
         String sqlQueryDirector = "DELETE " +
                 "FROM FILM_DIRECTORS " +
                 "WHERE ID_FILM = ? ";
 
-        jdbcTemplate.update(sqlQueryDirector, film.getId());
+        jdbcTemplate.update(sqlQueryDirector, id);
 
         String sqlQuery = "DELETE " +
                 "FROM films " +
                 "WHERE id = ?";
 
-        jdbcTemplate.update(sqlQuery, film.getId());
+        jdbcTemplate.update(sqlQuery, id);
     }
 
     @Override
