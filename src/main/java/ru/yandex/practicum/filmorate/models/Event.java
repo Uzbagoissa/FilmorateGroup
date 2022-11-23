@@ -18,11 +18,11 @@ public class Event {
 
     @NotNull
     @NotBlank
-    private String entityType;
+    private String eventType;
 
     @NotNull
     @NotBlank
     private String operation;
 
-    private LocalTime timestamp;
+    private Long timestamp;
 }

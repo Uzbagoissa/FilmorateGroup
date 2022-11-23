@@ -61,7 +61,7 @@ public class UserController {
         return userService.getFriendsById(userId);
     }
 
-    @GetMapping(value = "/users/{id}/feed")
+    @GetMapping(value = "/{id}/feed")
     public List<Event> getFeedByUserId(@PathVariable Integer id) {
         return userService.getFeedByUserId(id);
     }

@@ -38,14 +38,16 @@ public class ReviewService {
             throw new EmptyResultFromDataBaseException("Пользователь с идентификатором " + review.getUserId() + " отсутствует");
         }
 
+        Review createdReview = reviewStorage.create(review);
+
         Map<String, Object> params = eventStorage.makeEvent(
                 (long)review.getUserId(),
-                review.getFilmId(),
+                Math.toIntExact(createdReview.getReviewId()),
                 "review",
                 "add"
         );
         eventStorage.save(params);
-        return reviewStorage.create(review);
+        return createdReview;
     }
 
     public Review update(Review review) {

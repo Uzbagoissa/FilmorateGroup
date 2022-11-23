@@ -88,7 +88,6 @@ public class UserService {
     }
 
     public List<Event> getFeedByUserId(Integer id) {
-        // доделать получение фида
-        return null;
+        return eventStorage.getOneById((long) id);
     }
 }
