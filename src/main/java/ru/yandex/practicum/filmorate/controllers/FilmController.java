@@ -93,4 +93,11 @@ public class FilmController {
         int friendId){
         return filmService.findCommon(userId, friendId);
     }
+
+    @GetMapping("/search")
+    public List<Film> searchFilms(@RequestParam(name = "query") String query,
+                                  @RequestParam(name = "by") String by)
+                                  throws IllegalArgumentException {
+        return filmService.searchFilm(query, by);
+    }
 }

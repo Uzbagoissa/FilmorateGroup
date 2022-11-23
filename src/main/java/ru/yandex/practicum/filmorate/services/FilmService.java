@@ -73,4 +73,7 @@ public class FilmService {
                 return common;
     }
 
+    public List<Film> searchFilm(String substring, String by) throws IllegalArgumentException {
+        return filmStorage.searchFilms(substring, by);
+    }
 }
