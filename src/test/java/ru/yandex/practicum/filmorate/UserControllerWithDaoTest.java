@@ -84,7 +84,7 @@ public class UserControllerWithDaoTest {
                 .build();
         userStorage.addUser(firstUser);
         firstUser.setId(1);
-        userStorage.removeUser(firstUser);
+        userStorage.removeUser(1);
         assertEquals(new ArrayList<>(0),userStorage.getUsers());
     }
     @Test

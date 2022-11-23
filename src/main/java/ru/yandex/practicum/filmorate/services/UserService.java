@@ -45,8 +45,8 @@ public class UserService {
         return listUser;
     }
 
-    public void removeUser(User user){
-        userStorage.removeUser(user);
+    public void removeUser(Integer id) {
+        userStorage.removeUser(id);
     }
 
 
