@@ -104,7 +104,8 @@ Ref: film_direcors.id_director > direcors.id
 Ref: events.user_id > users.id
 Ref: reviews.review_id < review_like.review_id
 Ref: reviews.review_id < review_dislike.review_id
-Ref: users.id < reviews.user_id
+Ref: users.id - reviews.user_id
 Ref: users.id < review_dislike.user_id
 Ref: users.id < review_like.user_id
+Ref: reviews.film_id - films.id
    ```
