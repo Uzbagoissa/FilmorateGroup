@@ -45,6 +45,7 @@ Table mpa {
 }
 
 Table likes {
+  id_user int [pk]
   id_film int [pk]
   id_user int [pk]
 }
