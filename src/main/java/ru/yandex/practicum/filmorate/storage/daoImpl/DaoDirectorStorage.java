@@ -8,10 +8,8 @@ import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.exceptions.EmptyResultFromDataBaseException;
 import ru.yandex.practicum.filmorate.exceptions.ValidationException;
-import ru.yandex.practicum.filmorate.exceptions.ValidationFilmByIdException;
 import ru.yandex.practicum.filmorate.models.Director;
 import ru.yandex.practicum.filmorate.models.Film;
-import ru.yandex.practicum.filmorate.models.Genre;
 
 import java.sql.*;
 import java.time.LocalDate;

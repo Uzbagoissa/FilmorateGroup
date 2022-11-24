@@ -5,10 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.models.Director;
-import ru.yandex.practicum.filmorate.models.Film;
-import ru.yandex.practicum.filmorate.models.Genre;
 import ru.yandex.practicum.filmorate.services.DirectorService;
-import ru.yandex.practicum.filmorate.services.GenreService;
 
 import javax.validation.Valid;
 import java.util.List;
