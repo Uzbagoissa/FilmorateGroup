@@ -36,6 +36,7 @@ public class DaoGenreStorage {
             genre = jdbcTemplate.queryForObject(sqlQuery, this::mapRowToGenre, id);
             return genre;
         } catch (Exception e) {
+            log.info("Genre c id: {} не найден ", id);
             throw new EmptyResultFromDataBaseException("Genre c id: " + id + " не найден");
         }
     }

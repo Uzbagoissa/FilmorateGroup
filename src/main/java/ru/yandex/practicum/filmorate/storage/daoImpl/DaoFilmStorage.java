@@ -54,6 +54,7 @@ public class DaoFilmStorage implements FilmStorage {
 
             return jdbcTemplate.queryForObject(sqlQuery, this::mapRowToFilms, filmId);
         } catch (Exception e) {
+            log.info("Фильм c id {} не содержится в базе ", filmId);
             throw new ValidationException("Фильм c id: " + filmId + " не содержится в базе");
         }
     }
@@ -302,7 +303,7 @@ public class DaoFilmStorage implements FilmStorage {
                     "LEFT OUTER JOIN film_directors AS fd ON f.id = fd.id_film " +
                     "LEFT OUTER JOIN directors AS d ON fd.id_director = d.id " +
                     "LEFT JOIN likes AS l ON f.id = l.id_film " +
-                    "WHERE " + getInsertString(substring, by) +
+                    "WHERE " + getInsertString(substring, by) + " " +
                     "GROUP BY f.id, l.id_user " +
                     "ORDER BY COUNT(l.id_user) DESC;";
         Set<Film> films = new HashSet<>(jdbcTemplate.query(sql, this::mapRowToFilms));

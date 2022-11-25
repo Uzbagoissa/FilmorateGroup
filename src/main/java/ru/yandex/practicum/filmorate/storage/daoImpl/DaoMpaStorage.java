@@ -35,6 +35,7 @@ public class DaoMpaStorage {
             mpa = jdbcTemplate.queryForObject(sqlQuery, this::mapRowToMpa, id);
             return mpa;
         } catch (Exception e) {
+            log.info("Mpa c id: {} не найден", id);
             throw new EmptyResultFromDataBaseException("Mpa c id: " + id + " не найден");
         }
     }

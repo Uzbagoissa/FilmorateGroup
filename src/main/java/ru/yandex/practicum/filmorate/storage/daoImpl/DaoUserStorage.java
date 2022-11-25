@@ -39,6 +39,7 @@ public class DaoUserStorage implements UserStorage {
                     "WHERE id = ?";
             return jdbcTemplate.queryForObject(sqlQuery, this::mapRowToUsers, userId);
         } catch (Exception e) {
+            log.info("Пользователь c id - {} не содержится в базе", userId);
             throw new ValidationException("Пользователь c id - " + userId + " не содержится в базе");
         }
     }

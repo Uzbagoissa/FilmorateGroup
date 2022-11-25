@@ -77,7 +77,7 @@ public class UserService {
     public Set<User> getFriendsById(Integer userId){
         Set<User> setFriends = userStorage.getFriendsById(userId);
 
-        log.info("Возвращены друзья {} пользователя id: {} ",setFriends.toString(), userId);
+        log.info("Возвращены друзья {} пользователя с id: {} ",setFriends.toString(), userId);
         return setFriends;
     }
     public Set<User> getCommonFriends(Integer userId, Integer otherId){
@@ -92,7 +92,6 @@ public class UserService {
     }
 
     public List<Film> getRecommendations(Integer id) {
-        log.info("Запрос рекомендаций для пользователя с id = " + id);
         return userStorage.getRecommendations(id);
     }
 }

@@ -24,10 +24,12 @@ public class GenreController {
     }
     @GetMapping
     public List<Genre> getAllGenre(){
+        log.info("Запрос получения всех жанров");
         return genreService.getAllGenre();
     }
     @GetMapping("/{id}")
     public Genre getGenreById(@PathVariable("id") Integer id){
+        log.info("Запрос получения жанра с id: {}", id);
         return genreService.getGenreById(id);
     }
 }
