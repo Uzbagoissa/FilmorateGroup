@@ -25,10 +25,12 @@ public class MpaController {
     }
     @GetMapping
     public List<Mpa> getAllMpa(){
+        log.info("Запрос получения всех возрастных рейтигов фильмов");
         return mpaService.getAllMpa();
     }
     @GetMapping("/{id}")
     public Mpa getMpaById(@PathVariable("id") Integer id){
+        log.info("Запрос получения возоастного рейтинга фильма с id: {} ", id);
         return mpaService.getMpaById(id);
     }
 
