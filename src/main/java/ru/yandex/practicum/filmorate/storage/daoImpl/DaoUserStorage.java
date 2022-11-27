@@ -1,12 +1,16 @@
 package ru.yandex.practicum.filmorate.storage.daoImpl;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.annotation.Primary;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.exceptions.ValidationException;
+import ru.yandex.practicum.filmorate.models.Film;
 import ru.yandex.practicum.filmorate.models.User;
+import ru.yandex.practicum.filmorate.services.GenreService;
+import ru.yandex.practicum.filmorate.services.MpaService;
 import ru.yandex.practicum.filmorate.storage.interf.UserStorage;
 
 import java.sql.*;
@@ -15,11 +19,16 @@ import java.util.*;
 
 @Component
 @Slf4j
+@Primary
 public class DaoUserStorage implements UserStorage {
     private final JdbcTemplate jdbcTemplate;
 
-    public DaoUserStorage(JdbcTemplate jdbcTemplate) {
+    private final MpaService mpaService;
+    private final GenreService genreService;
+    public DaoUserStorage(JdbcTemplate jdbcTemplate, MpaService mpaService, GenreService genreService) {
         this.jdbcTemplate = jdbcTemplate;
+        this.mpaService = mpaService;
+        this.genreService = genreService;
     }
 
     @Override
@@ -30,6 +39,7 @@ public class DaoUserStorage implements UserStorage {
                     "WHERE id = ?";
             return jdbcTemplate.queryForObject(sqlQuery, this::mapRowToUsers, userId);
         } catch (Exception e) {
+            log.info("Пользователь c id - {} не содержится в базе", userId);
             throw new ValidationException("Пользователь c id - " + userId + " не содержится в базе");
         }
     }
@@ -77,30 +87,17 @@ public class DaoUserStorage implements UserStorage {
     }
 
     @Override
-    public void removeUser(User user) {
-
-        // удаляем друзей пользователя
-        String sqlQueryFriends = "DELETE FROM users " +
-                "WHERE id IN" +
-                "( " +
-                "SELECT id_user_two " +
-                "FROM users_friends WHERE id_user_one = ?" +
-                ")";
-
-        jdbcTemplate.update(sqlQueryFriends, user.getId());
-
+    public void removeUser (Integer id) {
         String sqlQuery = "DELETE " +
                 "FROM users " +
                 "WHERE id = ?";
 
-        log.info("Удален пользователь под id: {}", user.getId());
-        jdbcTemplate.update(sqlQuery, user.getId());
+        log.info("Удален пользователь под id: {}", id);
+        jdbcTemplate.update(sqlQuery, id);
     }
 
     @Override
     public User addFriend(Integer userId, Integer friendId) {
-        getUserById(userId);
-        getUserById(friendId);
 
         String sqlQueryInsertFriend = "MERGE INTO users_friends(id_user_one, id_user_two)" +
                 "VALUES (?, ?)";
@@ -134,7 +131,7 @@ public class DaoUserStorage implements UserStorage {
                 "WHERE id_user_one = ? AND id_user_two = ?";
 
         jdbcTemplate.update(sqlQuery, userId, friendId);
-        log.info("У пользоателя с id: {} удален друг с id: {} ", userId, friendId);
+        log.info("У пользователя с id: {} удален друг с id: {} ", userId, friendId);
         return getUserById(userId);
     }
 
@@ -168,6 +165,41 @@ public class DaoUserStorage implements UserStorage {
                 "WHERE id_user_one = ?";
 
         return jdbcTemplate.queryForList(sqlQuery, Integer.class, userId);
+    }
+
+    public List<Film> getRecommendations(Integer userId) {
+        return jdbcTemplate.query(
+                "SELECT * FROM FILMS film " +
+                        "WHERE film.ID IN " +
+                            "(SELECT likes.ID_FILM  FROM LIKES likes " +
+                                "WHERE likes.ID_USER IN " +
+                                    "(SELECT ID_USER FROM LIKES l " +
+                                        "WHERE l.ID_USER != ? " +
+                                            "AND " +
+                                                "l.ID_FILM IN " +
+                                                    "(SELECT l.ID_FILM FROM LIKES l " +
+                                                        "WHERE l.ID_USER = ?)" +
+                                    ") " +
+                            "GROUP BY likes.ID_FILM " +
+                            "HAVING likes.ID_FILM NOT IN " +
+                                "(SELECT l.ID_FILM FROM LIKES l WHERE l.ID_USER = ?)" +
+                            ")",
+                this::mapRowToFilms,
+                userId, userId, userId);
+    }
+
+    private Film mapRowToFilms(ResultSet resultSet, int i) throws SQLException {
+        return Film.builder()
+                .id(resultSet.getInt("id"))
+                .name(resultSet.getString("name"))
+                .description(resultSet.getString("description"))
+                .releaseDate(resultSet.getDate("release_date").toLocalDate())
+                .duration(resultSet.getInt("duration"))
+                .likes(new HashSet<>(new DaoFilmStorage(jdbcTemplate).getLikesFromUserByFilmId(resultSet.getInt("id"))))
+                .rate(resultSet.getInt("rate"))
+                .mpa(mpaService.getMpaById(Integer.valueOf(resultSet.getString("mpa"))))
+                .genres(genreService.getGenresByIdFilm(resultSet.getInt("id")))
+                .build();
     }
 
     private User mapRowToUsers(ResultSet resultSet, int i) throws SQLException {
