@@ -1,4 +1,5 @@
 # java-filmorate
+# Аналог Кинопоиска - сервис, который работает с фильмами и оценками пользователей и возвращает топ-5 фильмов, рекомендованных к просмотру.
 Template repository for Filmorate project.
 ![diagram](https://github.com/EvgenyBelykh/java-filmorate/blob/main/filmorate%20(8).png)
 
