@@ -1,6 +1,10 @@
 # java-filmorate
 # Аналог Кинопоиска - сервис, который работает с фильмами и оценками пользователей и возвращает топ-5 фильмов, рекомендованных к просмотру.
-Template repository for Filmorate project.
+![Java](https://img.shields.io/badge/java-%23ED8B00.svg?style=for-the-badge&logo=java&logoColor=white) 
+![Spring](https://img.shields.io/badge/spring-%236DB33F.svg?style=for-the-badge&logo=spring&logoColor=white) 
+![Apache Maven](https://img.shields.io/badge/Apache%20Maven-C71A36?style=for-the-badge&logo=Apache%20Maven&logoColor=white) 
+![Hibernate](https://img.shields.io/badge/Hibernate-59666C?style=for-the-badge&logo=Hibernate&logoColor=white) 
+
 ![diagram](https://github.com/EvgenyBelykh/java-filmorate/blob/main/filmorate%20(8).png)
 
 ## Code from dbdiagram.io:
