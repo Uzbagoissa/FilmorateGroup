@@ -1,9 +1,7 @@
 # java-filmorate
-# Аналог Кинопоиска - сервис, который работает с фильмами и оценками пользователей и возвращает топ-5 фильмов, рекомендованных к просмотру.
-![Java](https://img.shields.io/badge/java-%23ED8B00.svg?style=for-the-badge&logo=java&logoColor=white) 
-![Spring](https://img.shields.io/badge/spring-%236DB33F.svg?style=for-the-badge&logo=spring&logoColor=white) 
-![Apache Maven](https://img.shields.io/badge/Apache%20Maven-C71A36?style=for-the-badge&logo=Apache%20Maven&logoColor=white) 
-![Hibernate](https://img.shields.io/badge/Hibernate-59666C?style=for-the-badge&logo=Hibernate&logoColor=white) 
+# Аналог Кинопоиска - сервис, который работает с фильмами и оценками пользователей и возвращает топ-5 фильмов, рекомендованных к просмотру. Использованный стек технологий: Spring Framework, Maven, Hibernate, БД H2
+
+## Примененный стек технологий: Spring Framework, Maven, Hibernate, БД H2
 
 ![diagram](https://github.com/EvgenyBelykh/java-filmorate/blob/main/filmorate%20(8).png)
 
